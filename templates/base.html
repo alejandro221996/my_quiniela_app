@@ -1,0 +1,263 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quinielas{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669',
+                        secondary: '#0f766e',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados para componentes */
+        .btn {
+            @apply px-4 py-2 rounded font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+        }
+        .btn-primary {
+            @apply bg-primary text-white hover:bg-primary/90 focus:ring-primary;
+        }
+        .btn-outline {
+            @apply border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-gray-500;
+        }
+        .form-input {
+            @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen" 
+      data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}"
+      data-username="{{ user.username|default:'anonymous' }}">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{% url 'quinielas:home' %}" class="text-xl font-bold text-primary">
+                        🏆 Quinielas
+                    </a>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'quinielas:dashboard' %}" class="text-gray-700 hover:text-primary font-medium transition-colors">
+                            📊 Dashboard
+                        </a>
+                        <a href="{% url 'quinielas:partidos' %}" class="text-gray-700 hover:text-primary transition-colors">
+                            ⚽ Partidos
+                        </a>
+                        <a href="{% url 'quinielas:mis_apuestas' %}" class="text-gray-700 hover:text-primary transition-colors">
+                            📊 Mis Apuestas
+                        </a>
+                        
+                        <!-- Mis Quinielas Dropdown (solo para creadores) -->
+                        {% load quinielas_extras %}
+                        {% get_user_created_quinielas user as created_quinielas %}
+                        {% if created_quinielas %}
+                        <div class="relative group">
+                            <button class="text-gray-700 hover:text-primary flex items-center transition-colors">
+                                🎯 Mis Quinielas
+                                <svg class="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="absolute left-0 mt-2 w-64 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border">
+                                {% for quiniela in created_quinielas %}
+                                <div class="px-4 py-3 border-b border-gray-100 last:border-b-0">
+                                    <div class="font-medium text-gray-900 text-sm">{{ quiniela.nombre }}</div>
+                                    <div class="flex space-x-2 mt-2">
+                                        <a href="{% url 'quinielas:dashboard_creador' quiniela.id %}" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 transition-colors">
+                                            📊 Dashboard
+                                        </a>
+                                        <a href="{% url 'quinielas:gestionar_participantes' quiniela.id %}" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition-colors">
+                                            👥 Gestionar
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- User Menu Dropdown -->
+                        <div class="relative group">
+                            <button class="text-gray-700 hover:text-primary flex items-center font-medium transition-colors">
+                                👤 {{ user.username }}
+                                <svg class="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border">
+                                {% if user.userprofile.tipo_usuario == 'ORGANIZADOR' %}
+                                <a href="{% url 'quinielas:crear' %}" class="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white transition-colors">
+                                    ➕ Crear Quiniela
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'quinielas:unirse' %}" class="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white transition-colors">
+                                    🎯 Unirse a Quiniela
+                                </a>
+                                <hr class="my-1">
+                                <a href="{% url 'accounts:password_change' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors">
+                                    🔒 Cambiar Contraseña
+                                </a>
+                                <a href="{% url 'accounts:logout' %}" class="block px-4 py-2 text-red-600 hover:bg-red-50 transition-colors">
+                                    🚪 Cerrar Sesión
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="text-gray-700 hover:text-primary transition-colors">
+                            🔑 Iniciar Sesión
+                        </a>
+                        <a href="{% url 'accounts:registro' %}" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition-colors">
+                            📝 Registrarse
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-primary p-2 rounded-md">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-4 py-2 space-y-1">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'quinielas:dashboard' %}" class="block px-3 py-2 text-gray-700 hover:bg-primary hover:text-white rounded-md transition-colors">
+                        📊 Dashboard
+                    </a>
+                    <a href="{% url 'quinielas:partidos' %}" class="block px-3 py-2 text-gray-700 hover:bg-primary hover:text-white rounded-md transition-colors">
+                        ⚽ Partidos
+                    </a>
+                    <a href="{% url 'quinielas:mis_apuestas' %}" class="block px-3 py-2 text-gray-700 hover:bg-primary hover:text-white rounded-md transition-colors">
+                        📊 Mis Apuestas
+                    </a>
+                    <hr class="my-2">
+                    
+                    <!-- User Info -->
+                    <div class="px-3 py-2 text-sm text-gray-500">
+                        👤 {{ user.username }} ({{ user.userprofile.get_tipo_usuario_display|default:"Usuario" }})
+                    </div>
+                    
+                    {% if user.userprofile.tipo_usuario == 'ORGANIZADOR' %}
+                    <a href="{% url 'quinielas:crear' %}" class="block px-3 py-2 text-gray-700 hover:bg-primary hover:text-white rounded-md transition-colors">
+                        ➕ Crear Quiniela
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'quinielas:unirse' %}" class="block px-3 py-2 text-gray-700 hover:bg-primary hover:text-white rounded-md transition-colors">
+                        🎯 Unirse a Quiniela
+                    </a>
+                    
+                    <hr class="my-2">
+                    <a href="{% url 'accounts:password_change' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                        🔒 Cambiar Contraseña
+                    </a>
+                    <a href="{% url 'accounts:logout' %}" class="block px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors">
+                        🚪 Cerrar Sesión
+                    </a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="block px-3 py-2 text-gray-700 hover:bg-primary hover:text-white rounded-md transition-colors">
+                        🔑 Iniciar Sesión
+                    </a>
+                    <a href="{% url 'accounts:registro' %}" class="block px-3 py-2 bg-primary text-white hover:bg-secondary rounded-md transition-colors">
+                        📝 Registrarse
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Django Messages (hidden, will be converted to toasts) -->
+        {% if messages %}
+            <div class="hidden">
+                {% for message in messages %}
+                    <div class="django-message" data-level="{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="text-center text-gray-500">
+                <p>&copy; 2025 Sistema de Quinielas. Desarrollado con Django.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                menuIcon.classList.toggle('hidden');
+                closeIcon.classList.toggle('hidden');
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                }
+            });
+            
+            // Close mobile menu when window is resized to desktop
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+    <!-- Toast Notification System -->
+    <script src="{% static 'js/toast-notifications.js' %}"></script>
+    
+    <!-- AJAX Form Handler -->
+    <script src="{% static 'js/ajax-forms.js' %}"></script>
+    
+    <!-- Button Loading States -->
+    <script src="{% static 'js/button-loading.js' %}"></script>
+    
+    <!-- Estados en Tiempo Real -->
+    <script src="{% static 'js/partidos-tiempo-real.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

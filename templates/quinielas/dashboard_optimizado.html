@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Optimizado - Quinielas{% endblock %}
+
+{% block extra_css %}
+<style>
+.optimization-badge {
+    position: relative;
+    display: inline-block;
+}
+
+.optimization-badge::after {
+    content: '⚡';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #28a745;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.api-source-indicator {
+    font-size: 0.8em;
+    opacity: 0.7;
+    margin-left: 5px;
+}
+
+.cache-hit { color: #28a745; }
+.cache-miss { color: #dc3545; }
+.fallback { color: #ffc107; }
+
+.performance-metrics {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header con información de optimización -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="performance-metrics">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h6><i class="fas fa-tachometer-alt"></i> Performance</h6>
+                        <p class="mb-0">{{ optimizacion_info.tiempo_procesamiento_ms }}ms</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h6><i class="fas fa-database"></i> Cache Hits</h6>
+                        <p class="mb-0">{{ optimizacion_info.cache_hits }}/3 datos</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h6><i class="fas fa-globe"></i> Modo API</h6>
+                        <p class="mb-0">
+                            {% if optimizacion_info.api_mode == 'mock' %}
+                                🧪 Mock (Desarrollo)
+                            {% elif optimizacion_info.api_mode == 'real' %}
+                                🌐 APIs Reales
+                            {% else %}
+                                🛡️ Fallback
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <h6><i class="fas fa-shield-alt"></i> Estado</h6>
+                        <p class="mb-0">
+                            {% if optimizacion_info.cache_hits >= 2 %}
+                                ✅ Optimizado
+                            {% elif optimizacion_info.cache_hits >= 1 %}
+                                ⚡ Parcial
+                            {% else %}
+                                🔄 Sin Cache
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Equipos Populares -->
+        <div class="col-md-6 mb-4">
+            <div class="card optimization-badge">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-trophy"></i> Equipos Populares</h5>
+                    <span class="api-source-indicator 
+                        {% if optimizacion_info.sources.equipos == 'cache' %}cache-hit
+                        {% elif optimizacion_info.sources.equipos == 'fallback' %}fallback
+                        {% else %}cache-miss{% endif %}">
+                        {{ optimizacion_info.sources.equipos|default:"N/A" }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {% if equipos_populares %}
+                        {% for equipo in equipos_populares %}
+                        <div class="d-flex align-items-center mb-2">
+                            {% if equipo.logo %}
+                                <img src="{{ equipo.logo }}" alt="{{ equipo.nombre }}" 
+                                     class="rounded-circle me-2" width="30" height="30">
+                            {% else %}
+                                <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" 
+                                     style="width: 30px; height: 30px;">
+                                    <span class="text-white fw-bold">{{ equipo.nombre|first }}</span>
+                                </div>
+                            {% endif %}
+                            <span>{{ equipo.nombre|default:equipo.equipo.nombre }}</span>
+                            {% if equipo.puntos %}
+                                <span class="badge bg-primary ms-auto">{{ equipo.puntos }} pts</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No hay datos de equipos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Próximos Partidos -->
+        <div class="col-md-6 mb-4">
+            <div class="card optimization-badge">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-calendar-alt"></i> Próximos Partidos</h5>
+                    <span class="api-source-indicator 
+                        {% if optimizacion_info.sources.partidos == 'cache' %}cache-hit
+                        {% elif optimizacion_info.sources.partidos == 'fallback' %}fallback
+                        {% else %}cache-miss{% endif %}">
+                        {{ optimizacion_info.sources.partidos|default:"N/A" }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {% if partidos_proximos %}
+                        {% for partido in partidos_proximos %}
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                            <div>
+                                <strong>{{ partido.equipo_local|default:partido.equipo_local_id }} vs {{ partido.equipo_visitante|default:partido.equipo_visitante_id }}</strong>
+                                {% if partido.fecha_hora %}
+                                    <br><small class="text-muted">{{ partido.fecha_hora|date:"d/m H:i" }}</small>
+                                {% endif %}
+                            </div>
+                            {% if not partido.finalizado %}
+                                <span class="badge bg-success">Próximo</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No hay partidos próximos</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Tabla de Posiciones -->
+        <div class="col-md-8 mb-4">
+            <div class="card optimization-badge">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-list-ol"></i> Tabla de Posiciones</h5>
+                    <span class="api-source-indicator 
+                        {% if optimizacion_info.sources.tabla == 'cache' %}cache-hit
+                        {% elif optimizacion_info.sources.tabla == 'fallback' %}fallback
+                        {% else %}cache-miss{% endif %}">
+                        {{ optimizacion_info.sources.tabla|default:"N/A" }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {% if tabla_posiciones %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Pos</th>
+                                        <th>Equipo</th>
+                                        <th>Pts</th>
+                                        <th>PJ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in tabla_posiciones %}
+                                    <tr>
+                                        <td>{{ item.posicion|default:forloop.counter }}</td>
+                                        <td>{{ item.equipo.nombre|default:item.equipo }}</td>
+                                        <td>{{ item.puntos|default:"--" }}</td>
+                                        <td>{{ item.partidos_jugados|default:item.played|default:"--" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No hay datos de tabla de posiciones</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Partidos en Vivo y Estadísticas -->
+        <div class="col-md-4 mb-4">
+            <!-- Partidos en Vivo -->
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6><i class="fas fa-circle text-danger blink"></i> En Vivo</h6>
+                    <span class="api-source-indicator cache-hit">
+                        {{ optimizacion_info.partidos_vivo_source }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {% if partidos_en_vivo %}
+                        {% for partido in partidos_en_vivo %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small>{{ partido.home_team }} vs {{ partido.away_team }}</small>
+                            <span class="badge bg-danger">{{ partido.minute }}'</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <small class="text-muted">No hay partidos en vivo</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Ranking de Usuarios -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-users"></i> Top Usuarios</h6>
+                </div>
+                <div class="card-body">
+                    {% if ranking_usuarios %}
+                        {% for usuario in ranking_usuarios %}
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small>{{ usuario.usuario__username }}</small>
+                            <span class="badge bg-primary">{{ usuario.total_puntos }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <small class="text-muted">No hay ranking disponible</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información técnica (solo en development) -->
+    {% if debug %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h6><i class="fas fa-cog"></i> Información de Optimización (Dev Mode)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Fuentes de Datos:</h6>
+                            <ul class="list-unstyled">
+                                {% for key, source in optimizacion_info.sources.items %}
+                                <li><strong>{{ key|title }}:</strong> 
+                                    <span class="
+                                        {% if source == 'cache' %}text-success
+                                        {% elif source == 'fallback' %}text-warning
+                                        {% else %}text-primary{% endif %}">
+                                        {{ source }}
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Métricas:</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Tiempo de procesamiento:</strong> {{ optimizacion_info.tiempo_procesamiento_ms }}ms</li>
+                                <li><strong>Cache hits:</strong> {{ optimizacion_info.cache_hits }}</li>
+                                <li><strong>Modo API:</strong> {{ optimizacion_info.api_mode }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+.blink {
+    animation: blink 1s infinite;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-refresh para partidos en vivo cada 30 segundos
+setInterval(() => {
+    if (window.location.pathname.includes('dashboard-optimizado')) {
+        // Solo refrescar la sección de partidos en vivo
+        fetch('{% url "quinielas:dashboard_optimizado" %}')
+            .then(response => response.text())
+            .then(html => {
+                // En una implementación completa, aquí actualizarías solo la sección de partidos en vivo
+                console.log('Dashboard data refreshed');
+            })
+            .catch(error => console.log('Error refreshing:', error));
+    }
+}, 30000);
+</script>
+{% endblock %}

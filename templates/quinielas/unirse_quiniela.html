@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Unirse a Quiniela - Quinielas{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">🎯 Unirse a Quiniela</h1>
+            <p class="mt-2 text-gray-600">Ingresa el código de acceso que te compartieron</p>
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Código de acceso -->
+            <div>
+                <label for="{{ form.codigo_acceso.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.codigo_acceso.label }}
+                </label>
+                {{ form.codigo_acceso }}
+                {% if form.codigo_acceso.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.codigo_acceso.errors.0 }}</p>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">El código tiene 6 caracteres (letras y números)</p>
+            </div>
+
+            <!-- Info box -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-blue-800">Información importante:</h3>
+                        <div class="mt-2 text-sm text-blue-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>No puedes unirte a una quiniela que tú creaste</li>
+                                <li>No puedes unirte dos veces a la misma quiniela</li>
+                                <li>Solo se aceptan códigos de quinielas activas</li>
+                                <li>Debes poder apostar antes de la fecha límite</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits box -->
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-green-800">Al unirte podrás:</h3>
+                        <div class="mt-2 text-sm text-green-700">
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>Ver todos los partidos disponibles</li>
+                                <li>Hacer apuestas hasta la fecha límite</li>
+                                <li>Competir en el ranking con otros participantes</li>
+                                <li>Ver el historial de tus apuestas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-4 pt-6">
+                <button type="submit" class="flex-1 bg-primary text-white py-3 px-4 rounded-lg hover:bg-secondary transition-colors font-medium">
+                    🎯 Unirse Ahora
+                </button>
+                <a href="{% url 'quinielas:home' %}" class="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-400 transition-colors font-medium text-center">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+
+        <!-- Divider -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <div class="text-center">
+                <p class="text-sm text-gray-500 mb-4">¿No tienes cuenta?</p>
+                <a href="{% url 'quinielas:registro_rapido' %}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium inline-block mb-2">
+                    🚀 Registro Rápido con Código
+                </a>
+                <p class="text-xs text-gray-500">Crea tu cuenta y únete en un solo paso</p>
+                <div class="mt-4">
+                    <a href="{% url 'quinielas:crear' %}" class="text-primary hover:text-secondary font-medium">
+                        O crear tu propia quiniela →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

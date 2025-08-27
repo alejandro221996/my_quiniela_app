@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión - Quinielas{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Estilos mejorados para el formulario de login */
+.login-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.login-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #e5e7eb;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background-color: #fafafa;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #059669;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-input:hover {
+    border-color: #9ca3af;
+    background-color: white;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    display: inline-block;
+    padding: 0.625rem 1.5rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+    color: white;
+    text-decoration: none;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.error-message {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.success-icon {
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.divider span {
+    background: white;
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .login-card {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <!-- Header mejorado -->
+        <div class="text-center mb-8">
+            <div class="text-4xl mb-3">🏆</div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">¡Bienvenido de vuelta!</h1>
+            <p class="text-gray-600">Inicia sesión para gestionar tus quinielas</p>
+        </div>
+
+        <!-- Formulario mejorado -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Campo Usuario -->
+            <div class="input-group">
+                <label for="{{ form.username.id_for_label }}" class="input-label">
+                    👤 Nombre de Usuario
+                </label>
+                <input type="text" 
+                       name="{{ form.username.name }}" 
+                       id="{{ form.username.id_for_label }}"
+                       class="form-input"
+                       placeholder="Ingresa tu usuario"
+                       value="{{ form.username.value|default:'' }}"
+                       required>
+                {% if form.username.errors %}
+                    <div class="error-message">
+                        <span>⚠️</span>
+                        <span>{{ form.username.errors.0 }}</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div class="input-group">
+                <div class="flex justify-between items-center mb-2">
+                    <label for="{{ form.password.id_for_label }}" class="input-label">
+                        🔒 Contraseña
+                    </label>
+                    <a href="{% url 'accounts:password_reset' %}" 
+                       class="text-sm text-primary hover:text-secondary font-medium">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+                <input type="password" 
+                       name="{{ form.password.name }}" 
+                       id="{{ form.password.id_for_label }}"
+                       class="form-input"
+                       placeholder="Ingresa tu contraseña"
+                       required>
+                {% if form.password.errors %}
+                    <div class="error-message">
+                        <span>⚠️</span>
+                        <span>{{ form.password.errors.0 }}</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Errores generales -->
+            {% if form.non_field_errors %}
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <span class="text-red-400">❌</span>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">{{ form.non_field_errors.0 }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Botón de envío -->
+            <button type="submit" class="btn-primary no-auto-loading">
+                🚀 Iniciar Sesión
+            </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">
+            <span>¿No tienes cuenta?</span>
+        </div>
+
+        <!-- Enlaces mejorados -->
+        <div class="text-center space-y-4">
+            <p class="text-sm text-gray-600">
+                Crea tu cuenta para empezar a jugar
+            </p>
+            <a href="{% url 'accounts:registro' %}" 
+               class="btn-secondary">
+                📝 Registrarse
+            </a>
+            
+            <!-- Registro rápido -->
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mt-4">
+                <p class="text-sm text-gray-700 mb-2">¿Tienes un código de quiniela?</p>
+                <a href="{% url 'quinielas:registro_rapido' %}" 
+                   class="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200 text-sm font-medium">
+                    <span class="success-icon">⚡</span>
+                    Registro Rápido
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,420 @@
+{
+  "jornadas": [
+    {
+      "id": 1,
+      "numero": 1,
+      "nombre": "Jornada 1",
+      "fecha_inicio": "2025-01-10",
+      "fecha_fin": "2025-01-12",
+      "activa": true,
+      "partidos": [
+        {
+          "id": 1,
+          "equipo_local_id": 1,
+          "equipo_visitante_id": 2,
+          "fecha_hora": "2025-01-10T20:00:00-06:00",
+          "estadio": "Estadio Azteca",
+          "arbitro": "César Arturo Ramos",
+          "temperatura": "18°C",
+          "clima": "Despejado",
+          "goles_local": 2,
+          "goles_visitante": 1,
+          "finalizado": true,
+          "eventos": [
+            {
+              "minuto": 15,
+              "tipo": "gol",
+              "jugador": "Henry Martín",
+              "equipo": "local",
+              "descripcion": "Gol de cabeza tras centro de Diego Valdés"
+            },
+            {
+              "minuto": 34,
+              "tipo": "gol",
+              "jugador": "Roberto Alvarado",
+              "equipo": "visitante",
+              "descripcion": "Disparo desde fuera del área"
+            },
+            {
+              "minuto": 78,
+              "tipo": "gol",
+              "jugador": "Julián Quiñones",
+              "equipo": "local",
+              "descripcion": "Contraataque rápido, asistencia de Zendejas"
+            },
+            {
+              "minuto": 45,
+              "tipo": "tarjeta_amarilla",
+              "jugador": "Jesús Orozco",
+              "equipo": "visitante",
+              "descripcion": "Falta táctica"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "equipo_local_id": 3,
+          "equipo_visitante_id": 4,
+          "fecha_hora": "2025-01-10T22:00:00-06:00",
+          "estadio": "Estadio Azteca",
+          "arbitro": "Fernando Hernández",
+          "temperatura": "16°C",
+          "clima": "Nublado",
+          "goles_local": 0,
+          "goles_visitante": 0,
+          "finalizado": true,
+          "eventos": [
+            {
+              "minuto": 25,
+              "tipo": "tarjeta_amarilla",
+              "jugador": "Carlos Rodríguez",
+              "equipo": "local",
+              "descripcion": "Entrada fuerte"
+            },
+            {
+              "minuto": 67,
+              "tipo": "tarjeta_amarilla",
+              "jugador": "Dani Alves",
+              "equipo": "visitante",
+              "descripcion": "Protesta al árbitro"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "equipo_local_id": 5,
+          "equipo_visitante_id": 6,
+          "fecha_hora": "2025-01-11T19:00:00-06:00",
+          "estadio": "Estadio Universitario",
+          "arbitro": "Jorge Isaac Rojas",
+          "temperatura": "22°C",
+          "clima": "Despejado",
+          "goles_local": 3,
+          "goles_visitante": 2,
+          "finalizado": true,
+          "eventos": [
+            {
+              "minuto": 12,
+              "tipo": "gol",
+              "jugador": "André-Pierre Gignac",
+              "equipo": "local",
+              "descripcion": "Penal convertido"
+            },
+            {
+              "minuto": 28,
+              "tipo": "gol",
+              "jugador": "Sergio Canales",
+              "equipo": "visitante",
+              "descripcion": "Tiro libre directo"
+            },
+            {
+              "minuto": 55,
+              "tipo": "gol",
+              "jugador": "Luis Quiñones",
+              "equipo": "local",
+              "descripcion": "Jugada individual"
+            },
+            {
+              "minuto": 71,
+              "tipo": "gol",
+              "jugador": "Germán Berterame",
+              "equipo": "visitante",
+              "descripcion": "Cabezazo en área chica"
+            },
+            {
+              "minuto": 89,
+              "tipo": "gol",
+              "jugador": "Francisco Córdova",
+              "equipo": "local",
+              "descripcion": "Gol al último minuto"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "equipo_local_id": 7,
+          "equipo_visitante_id": 8,
+          "fecha_hora": "2025-01-11T21:00:00-06:00",
+          "estadio": "Estadio Jalisco",
+          "arbitro": "Luis Enrique Santander",
+          "temperatura": "24°C",
+          "clima": "Despejado",
+          "goles_local": 1,
+          "goles_visitante": 3,
+          "finalizado": true,
+          "eventos": [
+            {
+              "minuto": 8,
+              "tipo": "gol",
+              "jugador": "Jhon Murillo",
+              "equipo": "visitante",
+              "descripcion": "Aprovecha error defensivo"
+            },
+            {
+              "minuto": 31,
+              "tipo": "gol",
+              "jugador": "Jeremy Márquez",
+              "equipo": "local",
+              "descripcion": "Disparo desde media distancia"
+            },
+            {
+              "minuto": 58,
+              "tipo": "gol",
+              "jugador": "Stiven Mendoza",
+              "equipo": "visitante",
+              "descripcion": "Contraataque letal"
+            },
+            {
+              "minuto": 84,
+              "tipo": "gol",
+              "jugador": "José Alvarado",
+              "equipo": "visitante",
+              "descripcion": "Remata de primera en el área"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "equipo_local_id": 9,
+          "equipo_visitante_id": 10,
+          "fecha_hora": "2025-01-12T17:00:00-06:00",
+          "estadio": "Estadio Corona",
+          "arbitro": "Óscar Mejía",
+          "temperatura": "28°C",
+          "clima": "Soleado",
+          "goles_local": 2,
+          "goles_visitante": 0,
+          "finalizado": true,
+          "eventos": [
+            {
+              "minuto": 22,
+              "tipo": "gol",
+              "jugador": "Harold Preciado",
+              "equipo": "local",
+              "descripcion": "Definición cruzada"
+            },
+            {
+              "minuto": 76,
+              "tipo": "gol",
+              "jugador": "Jordan Carrillo",
+              "equipo": "local",
+              "descripcion": "Jugada colectiva"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "numero": 2,
+      "nombre": "Jornada 2",
+      "fecha_inicio": "2025-01-17",
+      "fecha_fin": "2025-01-19",
+      "activa": true,
+      "partidos": [
+        {
+          "id": 6,
+          "equipo_local_id": 2,
+          "equipo_visitante_id": 3,
+          "fecha_hora": "2025-01-17T20:00:00-06:00",
+          "estadio": "Estadio Akron",
+          "arbitro": "Marco Antonio Ortiz",
+          "temperatura": "20°C",
+          "clima": "Despejado",
+          "goles_local": null,
+          "goles_visitante": null,
+          "finalizado": false,
+          "pronostico": {
+            "probabilidad_local": 45,
+            "probabilidad_empate": 30,
+            "probabilidad_visitante": 25
+          }
+        },
+        {
+          "id": 7,
+          "equipo_local_id": 4,
+          "equipo_visitante_id": 5,
+          "fecha_hora": "2025-01-17T22:00:00-06:00",
+          "estadio": "Estadio Olímpico Universitario",
+          "arbitro": "Adonai Escobedo",
+          "temperatura": "18°C",
+          "clima": "Nublado",
+          "goles_local": null,
+          "goles_visitante": null,
+          "finalizado": false,
+          "pronostico": {
+            "probabilidad_local": 30,
+            "probabilidad_empate": 25,
+            "probabilidad_visitante": 45
+          }
+        },
+        {
+          "id": 8,
+          "equipo_local_id": 6,
+          "equipo_visitante_id": 7,
+          "fecha_hora": "2025-01-18T19:00:00-06:00",
+          "estadio": "Estadio BBVA",
+          "arbitro": "Oscar Macías",
+          "temperatura": "15°C",
+          "clima": "Lluvia ligera",
+          "goles_local": null,
+          "goles_visitante": null,
+          "finalizado": false,
+          "pronostico": {
+            "probabilidad_local": 55,
+            "probabilidad_empate": 25,
+            "probabilidad_visitante": 20
+          }
+        },
+        {
+          "id": 9,
+          "equipo_local_id": 8,
+          "equipo_visitante_id": 9,
+          "fecha_hora": "2025-01-18T21:00:00-06:00",
+          "estadio": "Estadio León",
+          "arbitro": "Diego Montaño",
+          "temperatura": "21°C",
+          "clima": "Despejado",
+          "goles_local": null,
+          "goles_visitante": null,
+          "finalizado": false,
+          "pronostico": {
+            "probabilidad_local": 40,
+            "probabilidad_empate": 35,
+            "probabilidad_visitante": 25
+          }
+        },
+        {
+          "id": 10,
+          "equipo_local_id": 10,
+          "equipo_visitante_id": 1,
+          "fecha_hora": "2025-01-19T17:00:00-06:00",
+          "estadio": "Estadio Hidalgo",
+          "arbitro": "César Ramos",
+          "temperatura": "19°C",
+          "clima": "Despejado",
+          "goles_local": null,
+          "goles_visitante": null,
+          "finalizado": false,
+          "pronostico": {
+            "probabilidad_local": 25,
+            "probabilidad_empate": 30,
+            "probabilidad_visitante": 45
+          }
+        }
+      ]
+    }
+  ],
+  "estadisticas_equipos": {
+    "1": {
+      "partidos_jugados": 1,
+      "victorias": 1,
+      "empates": 0,
+      "derrotas": 0,
+      "goles_favor": 2,
+      "goles_contra": 1,
+      "diferencia_goles": 1,
+      "puntos": 3,
+      "posicion_tabla": 1
+    },
+    "2": {
+      "partidos_jugados": 1,
+      "victorias": 0,
+      "empates": 0,
+      "derrotas": 1,
+      "goles_favor": 1,
+      "goles_contra": 2,
+      "diferencia_goles": -1,
+      "puntos": 0,
+      "posicion_tabla": 12
+    },
+    "3": {
+      "partidos_jugados": 1,
+      "victorias": 0,
+      "empates": 1,
+      "derrotas": 0,
+      "goles_favor": 0,
+      "goles_contra": 0,
+      "diferencia_goles": 0,
+      "puntos": 1,
+      "posicion_tabla": 8
+    },
+    "4": {
+      "partidos_jugados": 1,
+      "victorias": 0,
+      "empates": 1,
+      "derrotas": 0,
+      "goles_favor": 0,
+      "goles_contra": 0,
+      "diferencia_goles": 0,
+      "puntos": 1,
+      "posicion_tabla": 9
+    },
+    "5": {
+      "partidos_jugados": 1,
+      "victorias": 1,
+      "empates": 0,
+      "derrotas": 0,
+      "goles_favor": 3,
+      "goles_contra": 2,
+      "diferencia_goles": 1,
+      "puntos": 3,
+      "posicion_tabla": 2
+    },
+    "6": {
+      "partidos_jugados": 1,
+      "victorias": 0,
+      "empates": 0,
+      "derrotas": 1,
+      "goles_favor": 2,
+      "goles_contra": 3,
+      "diferencia_goles": -1,
+      "puntos": 0,
+      "posicion_tabla": 13
+    },
+    "7": {
+      "partidos_jugados": 1,
+      "victorias": 0,
+      "empates": 0,
+      "derrotas": 1,
+      "goles_favor": 1,
+      "goles_contra": 3,
+      "diferencia_goles": -2,
+      "puntos": 0,
+      "posicion_tabla": 16
+    },
+    "8": {
+      "partidos_jugados": 1,
+      "victorias": 1,
+      "empates": 0,
+      "derrotas": 0,
+      "goles_favor": 3,
+      "goles_contra": 1,
+      "diferencia_goles": 2,
+      "puntos": 3,
+      "posicion_tabla": 3
+    },
+    "9": {
+      "partidos_jugados": 1,
+      "victorias": 1,
+      "empates": 0,
+      "derrotas": 0,
+      "goles_favor": 2,
+      "goles_contra": 0,
+      "diferencia_goles": 2,
+      "puntos": 3,
+      "posicion_tabla": 4
+    },
+    "10": {
+      "partidos_jugados": 1,
+      "victorias": 0,
+      "empates": 0,
+      "derrotas": 1,
+      "goles_favor": 0,
+      "goles_contra": 2,
+      "diferencia_goles": -2,
+      "puntos": 0,
+      "posicion_tabla": 17
+    }
+  }
+}

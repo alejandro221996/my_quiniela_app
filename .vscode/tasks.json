@@ -1,0 +1,30 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Ejecutar servidor Django",
+			"type": "shell",
+			"command": "/Users/alejandrojuarez/QuinielaDjango/.venv/bin/python",
+			"args": [
+				"manage.py",
+				"runserver"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Ejecutar servidor Django",
+			"type": "shell",
+			"command": "/Users/alejandrojuarez/QuinielaDjango/.venv/bin/python",
+			"args": [
+				"manage.py",
+				"runserver",
+				"8001"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

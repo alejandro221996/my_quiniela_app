@@ -1,0 +1,184 @@
+{
+  "equipos": [
+    {
+      "id": 1,
+      "nombre": "Club América",
+      "nombre_corto": "AME",
+      "ciudad": "Ciudad de México",
+      "estadio": "Estadio Azteca",
+      "fundacion": 1916,
+      "colores": ["amarillo", "azul"],
+      "logo_url": "https://example.com/logos/america.png"
+    },
+    {
+      "id": 2,
+      "nombre": "Club Deportivo Guadalajara",
+      "nombre_corto": "CHI",
+      "ciudad": "Guadalajara",
+      "estadio": "Estadio Akron",
+      "fundacion": 1906,
+      "colores": ["rojo", "blanco"],
+      "logo_url": "https://example.com/logos/chivas.png"
+    },
+    {
+      "id": 3,
+      "nombre": "Cruz Azul",
+      "nombre_corto": "CAZ",
+      "ciudad": "Ciudad de México",
+      "estadio": "Estadio Azteca",
+      "fundacion": 1927,
+      "colores": ["azul", "blanco"],
+      "logo_url": "https://example.com/logos/cruzazul.png"
+    },
+    {
+      "id": 4,
+      "nombre": "Pumas UNAM",
+      "nombre_corto": "PUM",
+      "ciudad": "Ciudad de México",
+      "estadio": "Estadio Olímpico Universitario",
+      "fundacion": 1954,
+      "colores": ["azul", "dorado"],
+      "logo_url": "https://example.com/logos/pumas.png"
+    },
+    {
+      "id": 5,
+      "nombre": "Tigres UANL",
+      "nombre_corto": "TIG",
+      "ciudad": "Monterrey",
+      "estadio": "Estadio Universitario",
+      "fundacion": 1960,
+      "colores": ["amarillo", "azul"],
+      "logo_url": "https://example.com/logos/tigres.png"
+    },
+    {
+      "id": 6,
+      "nombre": "CF Monterrey",
+      "nombre_corto": "MTY",
+      "ciudad": "Monterrey",
+      "estadio": "Estadio BBVA",
+      "fundacion": 1945,
+      "colores": ["azul", "blanco"],
+      "logo_url": "https://example.com/logos/monterrey.png"
+    },
+    {
+      "id": 7,
+      "nombre": "Atlas FC",
+      "nombre_corto": "ATL",
+      "ciudad": "Guadalajara",
+      "estadio": "Estadio Jalisco",
+      "fundacion": 1916,
+      "colores": ["rojo", "negro"],
+      "logo_url": "https://example.com/logos/atlas.png"
+    },
+    {
+      "id": 8,
+      "nombre": "Club León",
+      "nombre_corto": "LEO",
+      "ciudad": "León",
+      "estadio": "Estadio León",
+      "fundacion": 1944,
+      "colores": ["verde", "blanco"],
+      "logo_url": "https://example.com/logos/leon.png"
+    },
+    {
+      "id": 9,
+      "nombre": "Santos Laguna",
+      "nombre_corto": "SAN",
+      "ciudad": "Torreón",
+      "estadio": "Estadio Corona",
+      "fundacion": 1983,
+      "colores": ["verde", "blanco"],
+      "logo_url": "https://example.com/logos/santos.png"
+    },
+    {
+      "id": 10,
+      "nombre": "CF Pachuca",
+      "nombre_corto": "PAC",
+      "ciudad": "Pachuca",
+      "estadio": "Estadio Hidalgo",
+      "fundacion": 1901,
+      "colores": ["azul", "blanco"],
+      "logo_url": "https://example.com/logos/pachuca.png"
+    },
+    {
+      "id": 11,
+      "nombre": "Deportivo Toluca FC",
+      "nombre_corto": "TOL",
+      "ciudad": "Toluca",
+      "estadio": "Estadio Nemesio Díez",
+      "fundacion": 1917,
+      "colores": ["rojo", "blanco"],
+      "logo_url": "https://example.com/logos/toluca.png"
+    },
+    {
+      "id": 12,
+      "nombre": "Club Necaxa",
+      "nombre_corto": "NEC",
+      "ciudad": "Aguascalientes",
+      "estadio": "Estadio Victoria",
+      "fundacion": 1923,
+      "colores": ["rojo", "blanco"],
+      "logo_url": "https://example.com/logos/necaxa.png"
+    },
+    {
+      "id": 13,
+      "nombre": "Club de Fútbol Puebla",
+      "nombre_corto": "PUE",
+      "ciudad": "Puebla",
+      "estadio": "Estadio Cuauhtémoc",
+      "fundacion": 1944,
+      "colores": ["azul", "blanco"],
+      "logo_url": "https://example.com/logos/puebla.png"
+    },
+    {
+      "id": 14,
+      "nombre": "Querétaro FC",
+      "nombre_corto": "QRO",
+      "ciudad": "Querétaro",
+      "estadio": "Estadio Corregidora",
+      "fundacion": 1950,
+      "colores": ["azul", "negro"],
+      "logo_url": "https://example.com/logos/queretaro.png"
+    },
+    {
+      "id": 15,
+      "nombre": "Club Tijuana",
+      "nombre_corto": "TIJ",
+      "ciudad": "Tijuana",
+      "estadio": "Estadio Caliente",
+      "fundacion": 2007,
+      "colores": ["rojo", "negro"],
+      "logo_url": "https://example.com/logos/tijuana.png"
+    },
+    {
+      "id": 16,
+      "nombre": "FC Juárez",
+      "nombre_corto": "JUA",
+      "ciudad": "Ciudad Juárez",
+      "estadio": "Estadio Olímpico Benito Juárez",
+      "fundacion": 2015,
+      "colores": ["verde", "rojo"],
+      "logo_url": "https://example.com/logos/juarez.png"
+    },
+    {
+      "id": 17,
+      "nombre": "Mazatlán FC",
+      "nombre_corto": "MAZ",
+      "ciudad": "Mazatlán",
+      "estadio": "Estadio de Mazatlán",
+      "fundacion": 2020,
+      "colores": ["morado", "blanco"],
+      "logo_url": "https://example.com/logos/mazatlan.png"
+    },
+    {
+      "id": 18,
+      "nombre": "Atlético de San Luis",
+      "nombre_corto": "SLU",
+      "ciudad": "San Luis Potosí",
+      "estadio": "Estadio Alfonso Lastras",
+      "fundacion": 2013,
+      "colores": ["rojo", "blanco"],
+      "logo_url": "https://example.com/logos/sanluis.png"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+<!-- Modal Marcar como Pagado -->
+<div id="modalMarcarPago" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">
+                    Marcar como Pagado
+                </h3>
+            </div>
+            
+            <form method="post" action="{% url 'quinielas:marcar_pago_participante' quiniela.id %}">
+                {% csrf_token %}
+                <input type="hidden" id="participante_id_pago" name="participante_id">
+                
+                <div class="px-6 py-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Monto Pagado *
+                        </label>
+                        <input type="number" name="monto_pagado" step="0.01" min="0" 
+                               class="form-input w-full" placeholder="0.00" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Método de Pago
+                        </label>
+                        <select name="metodo_pago" class="form-input w-full">
+                            <option value="EFECTIVO">Efectivo</option>
+                            <option value="TRANSFERENCIA">Transferencia</option>
+                            <option value="TARJETA">Tarjeta</option>
+                            <option value="DIGITAL">Pago Digital (PayPal, etc.)</option>
+                            <option value="OTRO">Otro</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Fecha de Pago
+                        </label>
+                        <input type="date" name="fecha_pago" 
+                               class="form-input w-full" value="{{ "now"|date:"Y-m-d" }}">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Notas (opcional)
+                        </label>
+                        <textarea name="notas_admin" rows="3" 
+                                  class="form-input w-full" 
+                                  placeholder="Notas adicionales sobre el pago..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="px-6 py-4 border-t bg-gray-50 flex justify-end space-x-3">
+                    <button type="button" onclick="cerrarModal('modalMarcarPago')" 
+                            class="btn btn-outline">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Marcar como Pagado
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+# Core Django dependencies
+Django>=5.0,<5.1
+djangorestframework>=3.14,<4.0
+
+# Database
+psycopg2-binary>=2.9,<3.0  # PostgreSQL adapter (para producción)
+dj-database-url>=2.0,<3.0  # Database URL parsing
+
+# Server
+gunicorn>=21.0,<22.0  # WSGI server for production
+whitenoise>=6.5,<7.0  # Static files serving
+
+# Environment
+python-decouple>=3.8,<4.0  # Environment variables
+python-dotenv>=1.0,<2.0
+
+# Development and Testing
+coverage>=7.2,<8.0
+django-debug-toolbar>=4.1,<5.0
+
+# Utils
+Pillow>=10.0,<11.0  # Image processing
+requests>=2.31,<3.0  # HTTP requests
+
+# Optional para PRODUCCIÓN DE GRAN ESCALA:
+# django-redis>=5.2,<6.0  # Solo si necesitas Redis
+# redis>=4.5,<5.0
+
+# Optional: Monitoring and logging
+# sentry-sdk>=1.28,<2.0  # Error tracking
+# django-extensions>=3.2,<4.0  # Development utilities

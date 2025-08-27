@@ -1,0 +1,113 @@
+{
+  "jugadores_destacados": [
+    {
+      "id": 1,
+      "nombre": "André-Pierre Gignac",
+      "equipo_id": 5,
+      "posicion": "Delantero",
+      "nacionalidad": "Francia",
+      "edad": 38,
+      "goles_temporada": 12,
+      "asistencias_temporada": 4,
+      "valor_mercado": "2.5M €",
+      "lesionado": false
+    },
+    {
+      "id": 2,
+      "nombre": "Henry Martín",
+      "equipo_id": 1,
+      "posicion": "Delantero",
+      "nacionalidad": "México",
+      "edad": 31,
+      "goles_temporada": 8,
+      "asistencias_temporada": 2,
+      "valor_mercado": "3.2M €",
+      "lesionado": false
+    },
+    {
+      "id": 3,
+      "nombre": "Sergio Canales",
+      "equipo_id": 6,
+      "posicion": "Mediocampista",
+      "nacionalidad": "España",
+      "edad": 33,
+      "goles_temporada": 5,
+      "asistencias_temporada": 9,
+      "valor_mercado": "4.1M €",
+      "lesionado": false
+    }
+  ],
+  "pronosticos_expertos": [
+    {
+      "partido_id": 6,
+      "experto": "ESPN Deportes",
+      "prediccion": "Empate 1-1",
+      "confianza": 75,
+      "razonamiento": "Ambos equipos llegan en buen momento, se espera un partido cerrado"
+    },
+    {
+      "partido_id": 7,
+      "experto": "TUDN",
+      "prediccion": "Tigres 2-0",
+      "confianza": 68,
+      "razonamiento": "Tigres tiene mejor ofensiva y juega de local en el Universitario"
+    }
+  ],
+  "tendencias_apuestas": {
+    "mas_apostado_local": {
+      "partido_id": 8,
+      "porcentaje_usuarios": 65,
+      "resultado_esperado": "2-1"
+    },
+    "mas_apostado_visitante": {
+      "partido_id": 10,
+      "porcentaje_usuarios": 58,
+      "resultado_esperado": "1-2"
+    },
+    "mas_apostado_empate": {
+      "partido_id": 6,
+      "porcentaje_usuarios": 42,
+      "resultado_esperado": "1-1"
+    }
+  },
+  "clima_partidos": [
+    {
+      "partido_id": 6,
+      "temperatura": "20°C",
+      "humedad": "65%",
+      "viento": "15 km/h",
+      "probabilidad_lluvia": "10%"
+    },
+    {
+      "partido_id": 7,
+      "temperatura": "18°C",
+      "humedad": "70%",
+      "viento": "8 km/h",
+      "probabilidad_lluvia": "25%"
+    }
+  ],
+  "historiales_enfrentamientos": {
+    "1_vs_2": {
+      "total_partidos": 285,
+      "victorias_local": 120,
+      "empates": 75,
+      "victorias_visitante": 90,
+      "ultimo_encuentro": {
+        "fecha": "2024-11-10",
+        "resultado": "América 1-0 Chivas",
+        "estadio": "Estadio Azteca"
+      }
+    },
+    "5_vs_6": {
+      "total_partidos": 45,
+      "victorias_local": 18,
+      "empates": 12,
+      "victorias_visitante": 15,
+      "ultimo_encuentro": {
+        "fecha": "2024-10-25",
+        "resultado": "Monterrey 2-1 Tigres",
+        "estadio": "Estadio BBVA"
+      }
+    }
+  }
+}

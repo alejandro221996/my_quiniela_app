@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load stats_components %}
+
+{% block title %}{{ quiniela.nombre }} - Quinielas{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ quiniela.nombre }}</h1>
+                {% if quiniela.descripcion %}
+                    <p class="mt-2 text-gray-600">{{ quiniela.descripcion }}</p>
+                {% endif %}
+                <div class="mt-4 flex flex-wrap gap-4 text-sm">
+                    <div class="flex items-center">
+                        <span class="font-medium text-gray-500">Código:</span>
+                        <span class="ml-2 font-mono font-bold text-primary bg-gray-100 px-2 py-1 rounded">
+                            {{ quiniela.codigo_acceso }}
+                        </span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="font-medium text-gray-500">Participantes:</span>
+                        <span class="ml-2 font-semibold">{{ quiniela.total_participantes }}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="font-medium text-gray-500">Fecha límite:</span>
+                        <span class="ml-2 {% if quiniela.puede_apostar %}text-green-600{% else %}text-red-600{% endif %}">
+                            {{ quiniela.fecha_limite|date:"d/m/Y H:i" }}
+                        </span>
+                    </div>
+                    {% if quiniela.creador == user %}
+                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">
+                            Eres el creador
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-4 md:mt-0 flex gap-2">
+                <a href="{% url 'quinielas:ranking' quiniela.pk %}" 
+                   class="bg-primary text-white px-4 py-2 rounded hover:bg-secondary transition-colors">
+                    Ver Ranking
+                </a>
+                {% if quiniela.puede_apostar %}
+                    <a href="{% url 'quinielas:partidos' %}" 
+                       class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                        Hacer Apuestas
+                    </a>
+                {% endif %}
+                {% if quiniela.creador == user %}
+                    <a href="{% url 'quinielas:dashboard_creador' quiniela.pk %}" 
+                       class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                        📊 Dashboard Creador
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-4 rounded-lg shadow-md text-center">
+            <div class="text-2xl font-bold text-primary">{{ quiniela.total_participantes }}</div>
+            <div class="text-gray-600">Participantes</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md text-center">
+            <div class="text-2xl font-bold text-green-600">
+                {% if quiniela.puede_apostar %}Activa{% else %}Cerrada{% endif %}
+            </div>
+            <div class="text-gray-600">Estado</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md text-center">
+            <div class="text-2xl font-bold text-blue-600">{{ partidos_disponibles|length }}</div>
+            <div class="text-gray-600">Partidos disponibles</div>
+        </div>
+    </div>
+
+    <!-- Ranking Preview usando componentes unificados -->
+    {% if ranking %}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">🏅 Ranking Actual</h2>
+            <div class="space-y-3">
+                {% for participante in ranking|slice:":5" %}
+                    {% ranking_item position=forloop.counter username=participante.usuario.first_name|default:participante.usuario.username points=participante.puntos_totales style="simple" size="normal" show_avatar=True show_medals=True is_current_user=participante.usuario|yesno:user member_since=participante.fecha_union highlight=participante.usuario|yesno:user %}
+                {% endfor %}
+            </div>
+            
+            {% if ranking|length > 5 %}
+                <div class="mt-4 text-center">
+                    <a href="{% url 'quinielas:ranking' quiniela.pk %}" class="text-primary hover:text-secondary">
+                        Ver ranking completo →
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Próximos Partidos -->
+    {% if partidos_disponibles %}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">⚽ Próximos Partidos</h2>
+            <div class="space-y-3">
+                {% for partido in partidos_disponibles %}
+                    <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="font-medium">{{ partido.equipo_local.nombre_corto }}</div>
+                                <div class="text-xs text-gray-500">vs</div>
+                                <div class="font-medium">{{ partido.equipo_visitante.nombre_corto }}</div>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <div>{{ partido.fecha_hora|date:"d/m/Y" }}</div>
+                                <div>{{ partido.fecha_hora|date:"H:i" }}</div>
+                            </div>
+                        </div>
+                        
+                        {% if quiniela.puede_apostar %}
+                            <a href="{% url 'quinielas:apostar' partido.pk %}" 
+                               class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
+                                Apostar
+                            </a>
+                        {% else %}
+                            <span class="text-gray-400 text-sm">Cerrado</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="mt-4 text-center">
+                <a href="{% url 'quinielas:partidos' %}" class="text-primary hover:text-secondary">
+                    Ver todos los partidos →
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">🎯 Acciones Rápidas</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="{% url 'quinielas:partidos' %}" 
+               class="p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-gray-50 transition-colors text-center">
+                <div class="text-2xl mb-2">⚽</div>
+                <div class="font-medium">Ver Partidos</div>
+                <div class="text-sm text-gray-500">Encuentra partidos para apostar</div>
+            </a>
+            
+            <a href="{% url 'quinielas:mis_apuestas' %}" 
+               class="p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-gray-50 transition-colors text-center">
+                <div class="text-2xl mb-2">📋</div>
+                <div class="font-medium">Mis Apuestas</div>
+                <div class="text-sm text-gray-500">Revisa tu historial</div>
+            </a>
+            
+            <a href="{% url 'quinielas:ranking' quiniela.pk %}" 
+               class="p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-gray-50 transition-colors text-center">
+                <div class="text-2xl mb-2">🏆</div>
+                <div class="font-medium">Ranking</div>
+                <div class="text-sm text-gray-500">Ve tu posición</div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

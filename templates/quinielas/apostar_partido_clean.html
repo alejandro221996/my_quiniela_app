@@ -1,0 +1,609 @@
+{% extends 'base.html' %}
+
+{% block title %}Apostar - {{ partido.equipo_local }} vs {{ partido.equipo_visitante }}{% endblock %}
+
+{% block extra_css %}
+<meta name="ajax-disabled" content="true">
+<style>
+/* Estilos para botones del predictor */
+.score-btn-minus {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    color: #ef4444;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 32px;
+    border: 3px solid #fee2e2;
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-btn-minus:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #fef2f2, #ffffff);
+    border-color: #fecaca;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.25);
+    color: #dc2626;
+}
+
+.score-btn-minus:active {
+    transform: translateY(0px);
+}
+
+.score-btn-plus {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    color: #10b981;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 32px;
+    border: 3px solid #d1fae5;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-btn-plus:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #f0fdf4, #ffffff);
+    border-color: #a7f3d0;
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.25);
+    color: #059669;
+}
+
+.score-btn-plus:active {
+    transform: translateY(0px);
+}
+
+/* Estilos para inputs de goles */
+.score-input-local {
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    font-size: 72px;
+    font-weight: 900;
+    border: 4px solid #e5e7eb;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #ffffff, #f9fafb);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    outline: none;
+    color: #1f2937;
+}
+
+.score-input-local:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.score-input-visitante {
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    font-size: 72px;
+    font-weight: 900;
+    border: 4px solid #e5e7eb;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #ffffff, #f9fafb);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    outline: none;
+    color: #1f2937;
+}
+
+.score-input-visitante:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* Efecto cuando se anima un input */
+.score-input-local.animate {
+    transform: scale(1.1);
+    border-color: #10b981;
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.2);
+}
+
+.score-input-visitante.animate {
+    transform: scale(1.1);
+    border-color: #10b981;
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.2);
+}
+
+/* Estilos para el separador VS */
+.vs-separator {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.3);
+    transform: scale(1);
+    transition: all 0.3s ease;
+    border: 4px solid #ffffff;
+}
+
+.vs-separator:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 45px rgba(16, 185, 129, 0.4);
+}
+
+.vs-separator span {
+    font-size: 28px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para el resultado de predicción */
+.prediction-result {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+    color: #6b7280;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    display: inline-block;
+    border: 2px solid #e5e7eb;
+}
+
+.prediction-result.local-wins {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    border-color: #10b981;
+}
+
+.prediction-result.visitante-wins {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    border-color: #10b981;
+}
+
+.prediction-result.empate {
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+    color: #6b7280;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border-color: #e5e7eb;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- NUEVO DISEÑO ACTIVADO - VERSIÓN 2.0 🚀 -->
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100"
+     style="background: linear-gradient(135deg, #f1f5f9 0%, #dbeafe 50%, #e0e7ff 100%);">
+    <div class="max-w-4xl mx-auto py-6 px-4">
+        
+        <!-- Header del partido mejorado -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-6 border border-gray-100">
+            <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 px-6 py-6 text-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-black opacity-10"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-32 translate-x-32"></div>
+                
+                <div class="relative flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button onclick="history.back()" class="text-white hover:text-blue-200 transition-colors p-2 rounded-lg hover:bg-white/10">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </button>
+                        <div>
+                            <h1 class="text-2xl font-bold">🎯 Hacer Apuesta</h1>
+                            <p class="text-blue-200 font-medium">{{ partido.jornada.nombre }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right bg-white/10 rounded-xl px-4 py-2 backdrop-blur-sm">
+                        <div class="text-sm text-blue-200">{{ partido.fecha_hora|date:"d/m/Y" }}</div>
+                        <div class="text-xl font-bold">{{ partido.fecha_hora|date:"H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Equipos con diseño moderno -->
+            <div class="p-8">
+                <div class="grid grid-cols-3 gap-8 items-center">
+                    <!-- Equipo Local -->
+                    <div class="text-center group">
+                        <div class="relative">
+                            <div class="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform group-hover:scale-105 transition-all duration-200">
+                                <span class="text-white text-2xl font-bold">{{ partido.equipo_local|slice:":2"|upper }}</span>
+                                <div class="absolute -top-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white"></div>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-1">{{ partido.equipo_local }}</h3>
+                        <p class="text-sm text-blue-600 font-medium bg-blue-50 px-3 py-1 rounded-full inline-block">🏠 Local</p>
+                    </div>
+                    
+                    <!-- VS con temporizador -->
+                    <div class="text-center">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-2xl mb-2 shadow-lg">
+                            <div class="text-2xl font-black">VS</div>
+                        </div>
+                        <div class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                            ⏰ Inicia en <span id="countdown" class="font-bold text-red-600">--</span>
+                        </div>
+                        {% if partido.estadio %}
+                        <div class="text-xs text-gray-400 mt-1">📍 {{ partido.estadio }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Equipo Visitante -->
+                    <div class="text-center group">
+                        <div class="relative">
+                            <div class="w-24 h-24 mx-auto bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform group-hover:scale-105 transition-all duration-200">
+                                <span class="text-white text-2xl font-bold">{{ partido.equipo_visitante|slice:":2"|upper }}</span>
+                                <div class="absolute -top-1 -right-1 w-6 h-6 bg-orange-400 rounded-full border-2 border-white"></div>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-1">{{ partido.equipo_visitante }}</h3>
+                        <p class="text-sm text-red-600 font-medium bg-red-50 px-3 py-1 rounded-full inline-block">✈️ Visitante</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario limpio -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">🎯 Hacer Apuesta</h2>
+                <p class="text-gray-600 mt-2">Predice el resultado del partido</p>
+            </div>
+            
+            
+            {% if apuesta_existente %}
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 mb-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-200 opacity-20 rounded-full -translate-y-16 translate-x-16"></div>
+                <div class="relative flex items-start">
+                    <div class="w-12 h-12 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-amber-900 font-bold text-lg mb-2">¡Ya tienes una apuesta activa!</h3>
+                        <div class="bg-white/70 rounded-xl p-4 mb-3">
+                            <div class="flex items-center justify-center space-x-4">
+                                <div class="text-center">
+                                    <div class="text-sm text-gray-600">{{ partido.equipo_local }}</div>
+                                    <div class="text-3xl font-black text-blue-600">{{ apuesta_existente.goles_local_apostados }}</div>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-400">-</div>
+                                <div class="text-center">
+                                    <div class="text-sm text-gray-600">{{ partido.equipo_visitante }}</div>
+                                    <div class="text-3xl font-black text-red-600">{{ apuesta_existente.goles_visitante_apostados }}</div>
+                                </div>
+                                {% if apuesta_existente.puntos is not None %}
+                                <div class="bg-green-100 px-3 py-2 rounded-xl">
+                                    <div class="text-xs text-green-600">Puntos</div>
+                                    <div class="text-lg font-bold text-green-800">{{ apuesta_existente.puntos }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <p class="text-amber-700 text-sm flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Puedes modificarla hasta el inicio del partido
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" 
+                  action="{% url 'quinielas:apostar' partido.pk %}" 
+                  class="no-ajax traditional-form space-y-8" 
+                  data-partido-id="{{ partido.id }}"
+                  data-no-ajax="true"
+                  data-force-normal-submit="true">
+                {% csrf_token %}
+                
+                <!-- Selección de quiniela simple -->
+                <div class="space-y-4">
+                    <label for="quiniela" class="block text-lg font-semibold text-gray-800">
+                        Seleccionar Quiniela
+                    </label>
+                    <select name="quiniela" id="quiniela" class="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500 text-gray-900 font-medium bg-gray-50 hover:bg-white transition-all duration-200" required>
+                        <option value="">🎯 Selecciona una quiniela...</option>
+                        {% for quiniela in quinielas %}
+                        <option value="{{ quiniela.id }}" {% if apuesta_existente and quiniela.id == apuesta_existente.participante.quiniela.id %}selected{% elif quiniela.id == selected_quiniela %}selected{% endif %}>
+                            🏆 {{ quiniela.nombre }}
+                            {% if quiniela.creador == user %}👑 (Creada por ti){% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Predictor de goles limpio -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-gray-800 text-center">Tu Predicción</h3>
+                    
+                    <!-- Selector de goles minimalista -->
+                    <div class="bg-white rounded-3xl p-12 border border-gray-200 shadow-lg">
+                        <div class="grid grid-cols-3 gap-12 items-center max-w-2xl mx-auto">
+                            <!-- Goles Local -->
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-gray-700 mb-8">{{ partido.equipo_local }}</div>
+                                <div class="flex items-center justify-center space-x-6">
+                                    <button type="button" onclick="decrementScore('goles_local')" class="score-btn-minus">
+                                        −
+                                    </button>
+                                    <input type="number" 
+                                           name="goles_local" 
+                                           id="goles_local" 
+                                           min="0" 
+                                           max="20" 
+                                           value="{% if apuesta_existente %}{{ apuesta_existente.goles_local_apostados }}{% else %}0{% endif %}"
+                                           class="score-input-local" 
+                                           required readonly>
+                                    <button type="button" onclick="incrementScore('goles_local')" class="score-btn-plus">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- VS Separador -->
+                            <div class="text-center">
+                                <div class="vs-separator">
+                                    <span>VS</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Goles Visitante -->
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-gray-700 mb-8">{{ partido.equipo_visitante }}</div>
+                                <div class="flex items-center justify-center space-x-6">
+                                    <button type="button" onclick="decrementScore('goles_visitante')" class="score-btn-minus">
+                                        −
+                                    </button>
+                                    <input type="number" 
+                                        name="goles_visitante" 
+                                        id="goles_visitante" 
+                                        min="0" 
+                                        max="20" 
+                                        class="score-input-visitante" 
+                                        required readonly
+                                        value='{% if apuesta_existente %}{{ apuesta_existente.goles_visitante_apostados }}{% else %}0{% endif %}'>
+                                    <button type="button" onclick="incrementScore('goles_visitante')" class="score-btn-plus">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del sistema de puntos moderna -->
+                <div class="bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 border border-indigo-200 rounded-2xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-200 opacity-20 rounded-full -translate-y-12 translate-x-12"></div>
+                    <div class="relative flex items-start">
+                        <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="w-full">
+                            <p class="font-bold text-indigo-900 mb-3 text-lg">💎 Sistema de Puntuación</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-white/70 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">🎯</div>
+                                    <div class="font-bold text-green-700">3 Puntos</div>
+                                    <div class="text-sm text-gray-600">Resultado exacto</div>
+                                </div>
+                                <div class="bg-white/70 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">⚽</div>
+                                    <div class="font-bold text-blue-700">1 Punto</div>
+                                    <div class="text-sm text-gray-600">Ganador correcto</div>
+                                </div>
+                                <div class="bg-white/70 rounded-xl p-4 text-center">
+                                    <div class="text-3xl mb-2">❌</div>
+                                    <div class="font-bold text-red-700">0 Puntos</div>
+                                    <div class="text-sm text-gray-600">Resultado incorrecto</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de acción modernos -->
+                <div class="flex flex-col sm:flex-row justify-center sm:justify-between gap-4 pt-8 mt-8 border-t-2 border-gray-100">
+                    <button type="button" onclick="history.back()" class="group px-8 py-4 border-2 border-gray-300 rounded-2xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-300/50 font-bold text-center transition-all duration-200 hover:scale-105 hover:shadow-lg sm:w-auto flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Cancelar
+                    </button>
+                    
+                    <button type="submit" 
+                            class="group px-8 py-4 bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 text-white rounded-2xl hover:from-green-600 hover:via-green-700 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-500/50 font-bold transition-all duration-200 min-w-[200px] sm:w-auto hover:scale-105 hover:shadow-xl flex items-center justify-center relative overflow-hidden"
+                            id="submit-bet-btn">
+                        <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
+                        {% if apuesta_existente %}
+                            <span class="flex items-center justify-center relative z-10">
+                                <svg class="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Actualizar Apuesta
+                            </span>
+                        {% else %}
+                            <span class="flex items-center justify-center relative z-10">
+                                <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                Realizar Apuesta
+                            </span>
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Estadísticas mejoradas (si están disponibles) -->
+        {% if partido.estadisticas %}
+        <div class="bg-white rounded-2xl shadow-xl p-8 mt-6 border border-gray-100">
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-r from-orange-400 to-pink-500 rounded-xl flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900">📊 Historial de Enfrentamientos</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200 hover:shadow-lg transition-all duration-200">
+                    <div class="text-4xl font-black text-blue-600 mb-2">{{ partido.estadisticas.victorias_local }}</div>
+                    <div class="text-sm text-blue-800 font-medium">Victorias</div>
+                    <div class="text-xs text-blue-600">{{ partido.equipo_local }}</div>
+                </div>
+                <div class="text-center p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-200">
+                    <div class="text-4xl font-black text-gray-600 mb-2">{{ partido.estadisticas.empates }}</div>
+                    <div class="text-sm text-gray-800 font-medium">Empates</div>
+                    <div class="text-xs text-gray-600">Historial</div>
+                </div>
+                <div class="text-center p-6 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl border border-red-200 hover:shadow-lg transition-all duration-200">
+                    <div class="text-4xl font-black text-red-600 mb-2">{{ partido.estadisticas.victorias_visitante }}</div>
+                    <div class="text-sm text-red-800 font-medium">Victorias</div>
+                    <div class="text-xs text-red-600">{{ partido.equipo_visitante }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- JavaScript para interactividad -->
+<script>
+// Función para incrementar goles
+function incrementScore(inputId) {
+    const input = document.getElementById(inputId);
+    const currentValue = parseInt(input.value) || 0;
+    if (currentValue < 20) {
+        input.value = currentValue + 1;
+        updatePredictionResult();
+        animateInput(input);
+    }
+}
+
+// Función para decrementar goles
+function decrementScore(inputId) {
+    const input = document.getElementById(inputId);
+    const currentValue = parseInt(input.value) || 0;
+    if (currentValue > 0) {
+        input.value = currentValue - 1;
+        updatePredictionResult();
+        animateInput(input);
+    }
+}
+
+// Actualizar resultado de predicción (simplificado)
+function updatePredictionResult() {
+    const golesLocal = parseInt(document.getElementById('goles_local').value) || 0;
+    const golesVisitante = parseInt(document.getElementById('goles_visitante').value) || 0;
+    
+    console.log('Predicción:', 'Local:', golesLocal, 'Visitante:', golesVisitante);
+}
+
+// Animar input cuando cambia con efectos mejorados
+function animateInput(input) {
+    // Agregar clase de animación
+    input.classList.add('animate');
+    
+    setTimeout(() => {
+        input.classList.remove('animate');
+    }, 300);
+    
+    console.log('Input animado:', input.name, '=', input.value);
+}
+
+// Countdown timer
+function startCountdown() {
+    const fechaPartido = new Date('{{ partido.fecha_hora|date:"c" }}');
+    const countdownElement = document.getElementById('countdown');
+    
+    function updateCountdown() {
+        const now = new Date();
+        const diff = fechaPartido - now;
+        
+        if (diff > 0) {
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (days > 0) {
+                countdownElement.textContent = `${days}d ${hours}h`;
+            } else if (hours > 0) {
+                countdownElement.textContent = `${hours}h ${minutes}m`;
+            } else {
+                countdownElement.textContent = `${minutes}m`;
+            }
+        } else {
+            countdownElement.textContent = 'En curso';
+            countdownElement.className = 'font-bold text-green-600';
+        }
+    }
+    
+    updateCountdown();
+    setInterval(updateCountdown, 60000); // Actualizar cada minuto
+}
+
+// Inicializar cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Página cargada - Inicializando predictor interactivo');
+    updatePredictionResult();
+    startCountdown();
+    
+    // Verificar que los botones existen
+    const btnLocal = document.querySelector('button[onclick*="incrementScore(\'goles_local\')"]');
+    const btnVisitante = document.querySelector('button[onclick*="incrementScore(\'goles_visitante\')"]');
+    console.log('Botones encontrados:', btnLocal ? 'Local OK' : 'Local NO', btnVisitante ? 'Visitante OK' : 'Visitante NO');
+    
+    // BLOQUEAR COMPLETAMENTE cualquier handler AJAX
+    const form = document.querySelector('form[data-partido-id]');
+    if (form) {
+        console.log('🚫 BLOQUEANDO handlers AJAX para este formulario');
+        
+        // Prevenir que se agregue el header X-Requested-With
+        const originalFetch = window.fetch;
+        const originalXHR = window.XMLHttpRequest;
+        
+        // Interceptar y bloquear cualquier petición AJAX desde este formulario
+        form.addEventListener('submit', function(e) {
+            // Detener cualquier propagación hacia handlers AJAX
+            e.stopImmediatePropagation();
+            
+            console.log('✅ FORMULARIO ENVIÁNDOSE COMO POST NORMAL');
+            
+            // Simple feedback visual
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.disabled) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Enviando...';
+            }
+            
+            // Permitir que el formulario se envíe normalmente
+            return true;
+        }, true); // Usar captura para ejecutar ANTES que otros handlers
+        
+        // Marcar el formulario como NO-AJAX
+        form.setAttribute('data-no-ajax', 'true');
+        form.removeAttribute('data-ajax');
+    }
+});
+</script>
+{% endblock %}

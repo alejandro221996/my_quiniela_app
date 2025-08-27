@@ -1,0 +1,66 @@
+Error en API call equipos: Mock API unavailable: Mock API error: 401
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: Mock API error: 401
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: Mock API error: 401
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: Mock API error: 401
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: Mock API error: 401
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: Mock API error: 401
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110f8ef90>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d4190>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d4910>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117a7490>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117a7a80>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x11188cb90>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d2ad0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d28b0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d3020>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d2ad0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d2140>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d1ae0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d2be0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d2ad0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117d2e00>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110ecae00>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110ecbf00>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110ecbdf0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110ecbce0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110eca140>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110eca250>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110eca690>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110ecaad0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110ecb130>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones
+Error en API call equipos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/equipos/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10c948ec0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para equipos
+Error en API call partidos: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/partidos/?proximos=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10c9dd090>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para partidos
+Error en API call tabla_posiciones: Mock API unavailable: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/mock/tabla-posiciones/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10c9dd810>: Failed to establish a new connection: [Errno 61] Connection refused'))
+Usando fallback para tabla_posiciones

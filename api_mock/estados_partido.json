@@ -1,0 +1,62 @@
+{
+  "estados_tiempo_real": [
+    {
+      "partido_id": 11,
+      "estado": "en_vivo",
+      "minuto_actual": 23,
+      "tiempo_adicional": 0,
+      "periodo": "primer_tiempo",
+      "goles_local": 1,
+      "goles_visitante": 0,
+      "eventos_recientes": [
+        {
+          "minuto": 18,
+          "tipo": "gol",
+          "jugador": "Carlos Vela",
+          "equipo": "local",
+          "descripcion": "Gol de tiro libre"
+        },
+        {
+          "minuto": 21,
+          "tipo": "tarjeta_amarilla",
+          "jugador": "Diego Lainez",
+          "equipo": "visitante"
+        }
+      ],
+      "estadisticas_live": {
+        "posesion_local": 58,
+        "posesion_visitante": 42,
+        "tiros_local": 4,
+        "tiros_visitante": 2,
+        "tiros_puerta_local": 2,
+        "tiros_puerta_visitante": 1,
+        "corners_local": 3,
+        "corners_visitante": 1,
+        "faltas_local": 8,
+        "faltas_visitante": 12
+      }
+    },
+    {
+      "partido_id": 12,
+      "estado": "medio_tiempo",
+      "minuto_actual": 45,
+      "tiempo_adicional": 2,
+      "periodo": "descanso",
+      "goles_local": 0,
+      "goles_visitante": 1,
+      "siguiente_accion": {
+        "tipo": "segundo_tiempo",
+        "tiempo_estimado": "15:00"
+      }
+    },
+    {
+      "partido_id": 13,
+      "estado": "suspendido",
+      "minuto_suspension": 67,
+      "razon": "Lluvia intensa",
+      "goles_local": 2,
+      "goles_visitante": 1,
+      "tiempo_estimado_reanudacion": "30 minutos"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+<!-- Modal Cambiar Estado -->
+<div id="modalCambiarEstado" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">
+                    Cambiar Estado del Participante
+                </h3>
+            </div>
+            
+            <form method="post" action="{% url 'quinielas:cambiar_estado_participante' quiniela.id %}">
+                {% csrf_token %}
+                <input type="hidden" id="participante_id_estado" name="participante_id">
+                
+                <div class="px-6 py-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Nuevo Estado *
+                        </label>
+                        <select name="nuevo_estado" class="form-input w-full" required>
+                            <option value="">Seleccionar estado...</option>
+                            <option value="PENDIENTE">⏳ Pendiente</option>
+                            <option value="PAGADO">✅ Pagado</option>
+                            <option value="SUSPENDIDO">🚫 Suspendido</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Motivo del Cambio (opcional)
+                        </label>
+                        <textarea name="notas_admin" rows="3" 
+                                  class="form-input w-full" 
+                                  placeholder="Motivo del cambio de estado..."></textarea>
+                    </div>
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex">
+                            <div class="text-yellow-400 mr-3">⚠️</div>
+                            <div>
+                                <h4 class="text-sm font-medium text-yellow-800">
+                                    Información importante:
+                                </h4>
+                                <ul class="text-sm text-yellow-700 mt-1 space-y-1">
+                                    <li>• <strong>Suspendido:</strong> El participante no podrá hacer más apuestas</li>
+                                    <li>• <strong>Pendiente:</strong> El participante puede apostar pero debe pagar</li>
+                                    <li>• <strong>Pagado:</strong> El participante está al día y puede apostar</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="px-6 py-4 border-t bg-gray-50 flex justify-end space-x-3">
+                    <button type="button" onclick="cerrarModal('modalCambiarEstado')" 
+                            class="btn btn-outline">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Cambiar Estado
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

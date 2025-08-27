@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+{% load stats_components %}
+
+{% block title %}Mis Apuestas - Quinielas{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto py-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+            <div class="bg-green-600 px-6 py-8 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold">🎯 Mis Apuestas</h1>
+                        <p class="text-green-100">Historial completo de tus predicciones</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold">{{ total_apuestas }}</div>
+                        <div class="text-sm text-green-100">Apuestas realizadas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estadísticas del usuario -->
+            <div class="p-6 bg-white">
+                {% stats_grid columns=4 %}
+                    {% stat_card title="Resultados Exactos" value=aciertos_exactos icon="🎯" size="normal" variant="default" icon_color="success" description="3 puntos c/u" %}
+                    {% stat_card title="Ganador Correcto" value=aciertos_ganador icon="🏆" size="normal" variant="default" icon_color="primary" description="1 punto c/u" %}
+                    {% stat_card title="Puntos Totales" value=puntos_totales icon="📊" size="normal" variant="highlighted" icon_color="neutral" description="Acumulados" %}
+                    {% stat_card title="Efectividad" value=porcentaje_efectividad icon="📈" unit="%" size="normal" variant="default" value_color=porcentaje_efectividad|stats_color:"precision" description="Promedio general" %}
+                {% endstats_grid %}
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div>
+                        <label for="quiniela-filter" class="block text-sm font-medium text-gray-700 mb-1">Quiniela:</label>
+                        <select id="quiniela-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option value="">Todas las quinielas</option>
+                            {% for quiniela in user_quinielas %}
+                            <option value="{{ quiniela.id }}">{{ quiniela.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="estado-filter" class="block text-sm font-medium text-gray-700 mb-1">Estado:</label>
+                        <select id="estado-filter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option value="">Todos</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="finalizado">Finalizados</option>
+                            <option value="acertado">Acertados</option>
+                            <option value="fallado">Fallados</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="exportarApuestas()" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Exportar
+                    </button>
+                    <a href="{% url 'quinielas:partidos' %}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Nueva Apuesta
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de apuestas -->
+        <div class="space-y-6">
+            {% for apuesta in apuestas %}
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden apuesta-card" 
+                 data-quiniela="{% if apuesta.participante.quiniela %}{{ apuesta.participante.quiniela.id }}{% endif %}" 
+                 data-estado="{% if apuesta.partido.finalizado %}{% if apuesta.puntos > 0 %}acertado{% else %}fallado{% endif %}{% else %}pendiente{% endif %}">
+                
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <!-- Info del partido -->
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                {% if apuesta.partido.finalizado %}
+                                    {% if apuesta.puntos == 3 %}
+                                        <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                            </svg>
+                                        </div>
+                                    {% elif apuesta.puntos == 1 %}
+                                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    {% else %}
+                                        <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    {{ apuesta.partido.equipo_local }} vs {{ apuesta.partido.equipo_visitante }}
+                                </h3>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span>{{ apuesta.partido.fecha_hora|date:"d/m/Y H:i" }}</span>
+                                    <span>•</span>
+                                    <span>{% if apuesta.participante.quiniela %}{{ apuesta.participante.quiniela.nombre }}{% else %}Quiniela N/A{% endif %}</span>
+                                    <span>•</span>
+                                    <span>Jornada {% if apuesta.partido.jornada %}{{ apuesta.partido.jornada.numero }}{% else %}N/A{% endif %}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Puntos obtenidos -->
+                        <div class="text-right">
+                            {% if apuesta.partido.finalizado %}
+                                <div class="text-2xl font-bold 
+                                    {% if apuesta.puntos == 3 %}text-green-600
+                                    {% elif apuesta.puntos == 1 %}text-blue-600
+                                    {% else %}text-red-600{% endif %}">
+                                    {{ apuesta.puntos }} pts
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    {% if apuesta.puntos == 3 %}Resultado exacto
+                                    {% elif apuesta.puntos == 1 %}Ganador correcto
+                                    {% else %}Sin acierto{% endif %}
+                                </div>
+                            {% else %}
+                                <div class="text-2xl font-bold text-yellow-600">-</div>
+                                <div class="text-sm text-gray-500">Pendiente</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Resultados -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Tu apuesta -->
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Tu Apuesta</h4>
+                            <div class="flex items-center justify-center space-x-4">
+                                <div class="text-center">
+                                    <div class="text-sm text-gray-600">{{ apuesta.partido.equipo_local }}</div>
+                                    <div class="text-3xl font-bold text-blue-600">{{ apuesta.goles_local_apostados }}</div>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-400">-</div>
+                                <div class="text-center">
+                                    <div class="text-sm text-gray-600">{{ apuesta.partido.equipo_visitante }}</div>
+                                    <div class="text-3xl font-bold text-blue-600">{{ apuesta.goles_visitante_apostados }}</div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-2 text-xs text-gray-500">
+                                Apuesta realizada {{ apuesta.fecha_modificacion|date:"d/m H:i" }}
+                            </div>
+                        </div>
+
+                        <!-- Resultado real -->
+                        <div class="{% if apuesta.partido.finalizado %}bg-gray-50{% else %}bg-yellow-50{% endif %} rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">
+                                {% if apuesta.partido.finalizado %}Resultado Final{% else %}Estado del Partido{% endif %}
+                            </h4>
+                            {% if apuesta.partido.finalizado %}
+                                <div class="flex items-center justify-center space-x-4">
+                                    <div class="text-center">
+                                        <div class="text-sm text-gray-600">{{ apuesta.partido.equipo_local }}</div>
+                                        <div class="text-3xl font-bold text-gray-900">{{ apuesta.partido.goles_local }}</div>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-400">-</div>
+                                    <div class="text-center">
+                                        <div class="text-sm text-gray-600">{{ apuesta.partido.equipo_visitante }}</div>
+                                        <div class="text-3xl font-bold text-gray-900">{{ apuesta.partido.goles_visitante }}</div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2 text-xs text-gray-500">
+                                    Finalizado {{ apuesta.partido.fecha_hora|date:"d/m H:i" }}
+                                </div>
+                            {% else %}
+                                <div class="text-center">
+                                    <div class="text-2xl text-yellow-600 mb-2">⏱️</div>
+                                    <div class="text-sm text-gray-600">
+                                        {% if apuesta.partido.en_vivo %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 animate-pulse">
+                                                EN VIVO
+                                            </span>
+                                        {% else %}
+                                            Inicia {{ apuesta.partido.fecha_hora|date:"d/m H:i" }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="flex justify-end mt-4 space-x-2">
+                        {% if not apuesta.partido.finalizado and not apuesta.partido.en_vivo %}
+                            <a href="{% url 'quinielas:apostar' apuesta.partido.id %}" 
+                               class="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700">
+                                Modificar Apuesta
+                            </a>
+                        {% endif %}
+                        {% if apuesta.participante.quiniela.pk %}
+                            <a href="{% url 'quinielas:detalle' apuesta.participante.quiniela.pk %}" 
+                               class="px-3 py-1 text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700">
+                                Ver Quiniela
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Estado vacío -->
+            <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+                <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Sin apuestas</h3>
+                <p class="text-gray-600 mb-6">Aún no has realizado ninguna apuesta. ¡Comienza ahora!</p>
+                <a href="{% url 'quinielas:partidos' %}" 
+                   class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Hacer Primera Apuesta
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        {% if is_paginated %}
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-8 rounded-lg shadow">
+            <div class="flex-1 flex justify-between sm:hidden">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Anterior
+                    </a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Siguiente
+                    </a>
+                {% endif %}
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Mostrando
+                        <span class="font-medium">{{ page_obj.start_index }}</span>
+                        a
+                        <span class="font-medium">{{ page_obj.end_index }}</span>
+                        de
+                        <span class="font-medium">{{ page_obj.paginator.count }}</span>
+                        apuestas
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="sr-only">Anterior</span>
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-green-50 text-sm font-medium text-green-600">
+                                    {{ num }}
+                                </span>
+                            {% else %}
+                                <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    {{ num }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="sr-only">Siguiente</span>
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Filtros dinámicos
+document.addEventListener('DOMContentLoaded', function() {
+    const quinielaFilter = document.getElementById('quiniela-filter');
+    const estadoFilter = document.getElementById('estado-filter');
+    const apuestasCards = document.querySelectorAll('.apuesta-card');
+
+    function aplicarFiltros() {
+        const quinielaId = quinielaFilter.value;
+        const estado = estadoFilter.value;
+
+        apuestasCards.forEach(card => {
+            let mostrar = true;
+
+            // Filtro por quiniela
+            if (quinielaId && card.dataset.quiniela !== quinielaId) {
+                mostrar = false;
+            }
+
+            // Filtro por estado
+            if (estado && card.dataset.estado !== estado) {
+                mostrar = false;
+            }
+
+            card.style.display = mostrar ? 'block' : 'none';
+        });
+    }
+
+    quinielaFilter.addEventListener('change', aplicarFiltros);
+    estadoFilter.addEventListener('change', aplicarFiltros);
+});
+
+// Función para exportar apuestas
+function exportarApuestas() {
+    // Aquí se podría implementar la exportación a CSV/PDF
+    alert('Función de exportación en desarrollo');
+}
+
+// Auto-refresh para partidos en vivo
+setInterval(function() {
+    const partidosEnVivo = document.querySelector('[data-en-vivo="true"]');
+    if (partidosEnVivo) {
+        location.reload();
+    }
+}, 60000); // Refresh cada minuto si hay partidos en vivo
+</script>
+{% endblock %}

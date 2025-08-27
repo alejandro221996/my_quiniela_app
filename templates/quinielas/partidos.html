@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+{% load quinielas_extras %}
+{% load navigation_tags %}
+
+{% block title %}Partidos - Quinielas{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Breadcrumbs -->
+    {% breadcrumbs %}
+    
+    <!-- Header -->
+    <div class="text-center">
+        <h1 class="text-3xl font-bold text-gray-900">⚽ Partidos Disponibles</h1>
+        <p class="mt-2 text-gray-600">Selecciona un partido y haz tu apuesta</p>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto bg-yellow-100 rounded-full mb-4">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Modificar Apuesta</h3>
+                    <p class="text-gray-600 mb-2" id="modalPartidoInfo">
+                        ¿Estás seguro de que deseas modificar tu apuesta para el partido?
+                    </p>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                        <p class="text-sm text-yellow-800">
+                            ⚠️ Tu apuesta actual se sobrescribirá con los nuevos valores.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="cerrarModal()" 
+                            class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors">
+                        Cancelar
+                    </button>
+                    <button onclick="confirmarModificacionModal()" 
+                            class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors">
+                        Sí, Modificar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-md p-4">
+        <div class="flex flex-wrap gap-4 items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-sm font-medium text-gray-700">Filtrar por jornada:</span>
+                <select class="border border-gray-300 rounded px-3 py-1 text-sm">
+                    <option value="">Todas las jornadas</option>
+                    {% for jornada in jornadas %}
+                        <option value="{{ jornada.numero }}">{{ jornada.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-sm font-medium text-gray-700">Estado:</span>
+                <select class="border border-gray-300 rounded px-3 py-1 text-sm">
+                    <option value="">Todos</option>
+                    <option value="disponible">Disponibles para apostar</option>
+                    <option value="finalizado">Finalizados</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partidos list -->
+    {% if partidos %}
+        <div class="space-y-4">
+            {% for partido in partidos %}
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow {% if partido.id in partidos_apostados %}border-l-4 border-green-500{% endif %}" data-partido-id="{{ partido.id }}">
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                            <!-- Información del partido -->
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                            {{ partido.jornada.nombre }}
+                                        </span>
+                                        {% if partido.id in partidos_apostados %}
+                                            <span class="text-sm bg-green-100 text-green-800 px-2 py-1 rounded flex items-center" 
+                                                  data-tooltip="Apostaste el {{ bet_info.fecha_apuesta|date:'d/m/Y H:i' }}">
+                                                ✅ Ya apostaste
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <!-- Usar las nuevas propiedades del modelo para el estado -->
+                                    {% if partido.estado_actual == 'FINALIZADO' %}
+                                        <span class="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded">
+                                            Finalizado
+                                        </span>
+                                    {% elif partido.estado_actual == 'PROGRAMADO' %}
+                                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                            Próximo
+                                        </span>
+                                    {% elif partido.estado_actual == 'EN_CURSO' %}
+                                        <span class="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                                            En curso
+                                        </span>
+                                    {% elif partido.estado_actual == 'PENDIENTE_RESULTADO' %}
+                                        <span class="text-sm bg-orange-100 text-orange-800 px-2 py-1 rounded">
+                                            Pendiente resultado
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Equipos -->
+                                <div class="flex items-center space-x-4 mb-3">
+                                    <div class="flex items-center space-x-3 flex-1">
+                                        <div class="text-right flex-1">
+                                            <div class="font-semibold text-lg">{{ partido.equipo_local.nombre }}</div>
+                                            <div class="text-sm text-gray-500">Local</div>
+                                        </div>
+                                        {% if partido.finalizado %}
+                                            <div class="text-center bg-gray-100 px-3 py-2 rounded">
+                                                <div class="font-bold text-lg">{{ partido.goles_local }}</div>
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center">
+                                                <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                                    <span class="text-sm font-bold text-gray-500">vs</span>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3 flex-1">
+                                        {% if partido.finalizado %}
+                                            <div class="text-center bg-gray-100 px-3 py-2 rounded">
+                                                <div class="font-bold text-lg">{{ partido.goles_visitante }}</div>
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center">
+                                                <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                                    <span class="text-sm font-bold text-gray-500">vs</span>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="text-left flex-1">
+                                            <div class="font-semibold text-lg">{{ partido.equipo_visitante.nombre }}</div>
+                                            <div class="text-sm text-gray-500">Visitante</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Fecha y hora -->
+                                <div class="text-sm text-gray-600">
+                                    <span class="font-medium">📅 {{ partido.fecha_hora|date:"l, d \d\e F \d\e Y" }}</span>
+                                    <span class="ml-4">🕐 {{ partido.fecha_hora|date:"H:i" }}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Acciones -->
+                            <div class="mt-4 md:mt-0 md:ml-6 flex flex-col space-y-2">
+                                {% if partido.puede_apostar %}
+                                    {% if partido.id in partidos_apostados %}
+                                        {% with bet_info=apuestas_usuario|get_item:partido.id %}
+                                            <div class="text-center space-y-2">
+                                                <!-- Mostrar la apuesta actual -->
+                                                <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                                                    <div class="text-sm text-green-700 font-medium mb-1">Tu apuesta:</div>
+                                                    <div class="text-xl font-bold text-green-800">
+                                                        {{ bet_info.goles_local }} - {{ bet_info.goles_visitante }}
+                                                    </div>
+                                                    <div class="text-xs text-green-600 mt-1">
+                                                        {{ bet_info.fecha_apuesta|date:"d/m H:i" }}
+                                                    </div>
+                                                </div>
+                                                <!-- Botón para modificar -->
+                                                <button onclick="confirmarModificacion({{ partido.pk }}, '{{ partido.equipo_local.nombre }}', '{{ partido.equipo_visitante.nombre }}')" 
+                                                        class="w-full bg-blue-600 text-white px-4 py-2 rounded text-center hover:bg-blue-700 transition-colors text-sm">
+                                                    ✏️ Cambiar Apuesta
+                                                </button>
+                                            </div>
+                                        {% endwith %}
+                                    {% else %}
+                                        <button onclick="verificarYApostar({{ partido.pk }})" 
+                                           class="w-full bg-green-600 text-white px-6 py-3 rounded text-center hover:bg-green-700 transition-colors font-semibold">
+                                            🎯 Apostar Ahora
+                                        </button>
+                                    {% endif %}
+                                {% elif partido.estado_actual == 'FINALIZADO' %}
+                                    <div class="text-center">
+                                        <div class="text-sm text-gray-500 mb-1">Resultado final</div>
+                                        <div class="font-bold text-lg bg-gray-100 rounded px-3 py-2">{{ partido.resultado_oficial }}</div>
+                                        {% if partido.id in partidos_apostados %}
+                                            {% with bet_info=apuestas_usuario|get_item:partido.id %}
+                                                {% if bet_info.puntos is not None %}
+                                                    <div class="mt-2">
+                                                        {% if bet_info.puntos > 0 %}
+                                                            <span class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
+                                                                🎉 +{{ bet_info.puntos }} pts
+                                                            </span>
+                                                        {% elif bet_info.puntos == 0 %}
+                                                            <span class="text-sm bg-gray-100 text-gray-800 px-3 py-1 rounded-full">
+                                                                ⚡ 0 pts
+                                                            </span>
+                                                        {% else %}
+                                                            <span class="text-sm bg-red-100 text-red-800 px-3 py-1 rounded-full">
+                                                                ❌ 0 pts
+                                                            </span>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="bg-gray-100 text-gray-600 px-4 py-2 rounded text-center">
+                                        {% if partido.estado_actual == 'EN_CURSO' %}
+                                            ⏱️ En juego
+                                        {% elif partido.estado_actual == 'PENDIENTE_RESULTADO' %}
+                                            ⌛ Esperando resultado
+                                        {% else %}
+                                            🔒 Cerrado
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        {% if is_paginated %}
+            <div class="flex justify-center mt-8">
+                <nav class="flex space-x-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1" class="px-3 py-2 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50">
+                            Primera
+                        </a>
+                        <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50">
+                            Anterior
+                        </a>
+                    {% endif %}
+                    
+                    <span class="px-3 py-2 text-sm bg-primary text-white border border-primary rounded">
+                        {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50">
+                            Siguiente
+                        </a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-2 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50">
+                            Última
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+        {% endif %}
+
+    {% else %}
+        <!-- Empty state -->
+        <div class="text-center py-12">
+            <div class="text-6xl mb-4">⚽</div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No hay partidos disponibles</h3>
+            <p class="text-gray-500 mb-6">Los partidos aparecerán aquí cuando estén programados</p>
+            <a href="{% url 'quinielas:home' %}" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition-colors">
+                Volver al inicio
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+// Simple filtering functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const filters = document.querySelectorAll('select');
+    filters.forEach(filter => {
+        filter.addEventListener('change', function() {
+            // Aquí se podría implementar filtrado dinámico con JavaScript
+            // o recargar la página con parámetros GET
+        });
+    });
+});
+</script>
+
+<script>
+// Variables globales para el modal
+let partidoIdPendiente = null;
+
+// Función para mostrar modal de confirmación
+function confirmarModificacion(partidoId, equipoLocal, equipoVisitante) {
+    console.log('Modal personalizado ejecutándose'); // Debug
+    
+    // Verificar que el modal existe
+    const modal = document.getElementById('confirmModal');
+    if (!modal) {
+        console.error('Modal no encontrado, usando confirm nativo');
+        const confirmacion = confirm(
+            `¿Estás seguro de que deseas modificar tu apuesta para el partido ${equipoLocal} vs ${equipoVisitante}?\n\n` +
+            `Tu apuesta actual se sobrescribirá con los nuevos valores.`
+        );
+        if (confirmacion) {
+            window.location.href = `/apostar/${partidoId}/`;
+        }
+        return;
+    }
+    
+    partidoIdPendiente = partidoId;
+    
+    // Actualizar el contenido del modal
+    document.getElementById('modalPartidoInfo').textContent = 
+        `¿Estás seguro de que deseas modificar tu apuesta para el partido ${equipoLocal} vs ${equipoVisitante}?`;
+    
+    // Mostrar el modal
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevenir scroll
+}
+
+// Función para confirmar la modificación desde el modal
+function confirmarModificacionModal() {
+    if (partidoIdPendiente) {
+        window.location.href = `/apostar/${partidoIdPendiente}/`;
+    }
+    cerrarModal();
+}
+
+// Función para cerrar el modal
+function cerrarModal() {
+    const modal = document.getElementById('confirmModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+    document.body.style.overflow = ''; // Restaurar scroll
+    partidoIdPendiente = null;
+}
+
+// Cerrar modal con ESC
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        cerrarModal();
+    }
+});
+
+// Cerrar modal al hacer click fuera
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('confirmModal');
+    if (modal) {
+        modal.addEventListener('click', function(event) {
+            if (event.target === this) {
+                cerrarModal();
+            }
+        });
+    }
+});
+
+// Función para verificar si puede apostar antes de navegar
+function verificarYApostar(partidoId) {
+    // Hacer petición HEAD para verificar si puede apostar
+    fetch(`/apostar/${partidoId}/`, {
+        method: 'HEAD',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // Si puede apostar, navegar normalmente
+            window.location.href = `/apostar/${partidoId}/`;
+        } else {
+            // Si no puede apostar, obtener mensaje específico
+            throw new Error('No puede apostar');
+        }
+    })
+    .catch(error => {
+        // Hacer GET para obtener el mensaje específico de error
+        fetch(`/apostar/${partidoId}/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data && !data.success && data.message) {
+                if (window.toastManager) {
+                    toastManager.error(data.message);
+                } else {
+                    alert(data.message);
+                }
+            } else {
+                if (window.toastManager) {
+                    toastManager.error('No puedes apostar en este partido.');
+                } else {
+                    alert('No puedes apostar en este partido.');
+                }
+            }
+        })
+        .catch(err => {
+            console.debug('Error obteniendo mensaje:', err);
+            if (window.toastManager) {
+                toastManager.error('No puedes apostar en este partido.');
+            } else {
+                alert('No puedes apostar en este partido.');
+            }
+        });
+    });
+}
+
+// Limpiar estados de loading al cargar la página (incluyendo navegación back)
+document.addEventListener('DOMContentLoaded', function() {
+    // Resetear todos los botones que puedan tener estado de loading
+    document.querySelectorAll('button').forEach(button => {
+        if (button.classList.contains('loading-state') || button.disabled) {
+            // Restaurar texto original
+            const originalText = button.dataset.originalText || button.textContent.trim();
+            button.innerHTML = originalText;
+            button.disabled = false;
+            button.classList.remove('opacity-75', 'cursor-not-allowed', 'loading-state');
+        }
+    });
+});
+
+// También limpiar en el evento pageshow (cuando se regresa con back button)
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        // La página se cargó desde el cache (back button)
+        document.querySelectorAll('button').forEach(button => {
+            if (button.classList.contains('loading-state') || button.disabled) {
+                const originalText = button.dataset.originalText || '🎯 Apostar';
+                button.innerHTML = originalText;
+                button.disabled = false;
+                button.classList.remove('opacity-75', 'cursor-not-allowed', 'loading-state');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

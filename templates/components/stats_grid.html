@@ -1,0 +1,67 @@
+{% comment %}
+Componente: Grilla de Estadísticas
+Uso: {% stats_grid stats_list columns='auto' size='normal' %}
+{% endcomment %}
+
+<div class="stats-grid {% if columns == 'auto' %}stats-grid-auto{% else %}stats-grid-{{ columns }}{% endif %}">
+    {% for stat in stats_list %}
+        {% if stat.type == 'ranking_item' %}
+            {% with stat as ranking_data %}
+                {% include 'components/ranking_item.html' with position=ranking_data.position username=ranking_data.username points=ranking_data.points precision=ranking_data.precision size=size %}
+            {% endwith %}
+        {% else %}
+            {% with stat as stat_data %}
+                {% include 'components/stat_card.html' with title=stat_data.title value=stat_data.value icon=stat_data.icon size=size variant=stat_data.variant icon_color=stat_data.icon_color value_color=stat_data.value_color unit=stat_data.unit %}
+            {% endwith %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+<style>
+.stats-grid {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+}
+
+.stats-grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.stats-grid-1 {
+    grid-template-columns: 1fr;
+}
+
+.stats-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.stats-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.stats-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid-2,
+    .stats-grid-3,
+    .stats-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid,
+    .stats-grid-2,
+    .stats-grid-3,
+    .stats-grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

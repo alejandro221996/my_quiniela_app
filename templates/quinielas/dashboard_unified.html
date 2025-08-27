@@ -1,0 +1,602 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load stats_components %}
+{% load navigation_tags %}
+{% load quinielas_extras %}
+
+{% block title %}Dashboard - {{ user.username }}{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+<style>
+    /* Vista Toggle Styles */
+    .view-toggle {
+        background: white;
+        border-radius: 12px;
+        padding: 8px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        display: flex;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .toggle-btn {
+        padding: 12px 24px;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #6b7280;
+    }
+
+    .toggle-btn.active {
+        background: #059669;
+        color: white;
+        box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
+    }
+
+    .toggle-btn:hover:not(.active) {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    /* Responsive Grid System */
+    .dashboard-grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .dashboard-grid.simple {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    /* Card Responsiveness */
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        
+        .view-toggle {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            text-align: center;
+        }
+    }
+
+    /* Advanced View Specific */
+    .advanced-metrics {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .simple-metrics {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    /* Hide/Show Views */
+    .view-simple, .view-advanced {
+        display: none;
+    }
+
+    .view-simple.active, .view-advanced.active {
+        display: block;
+    }
+
+    /* Button Styles */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .btn-action {
+        background: #059669;
+        color: white;
+        box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+    }
+
+    .btn-action:hover {
+        background: #047857;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+    }
+
+    .btn-action:active {
+        transform: translateY(0);
+    }
+
+    .btn-outline {
+        background: white;
+        color: #374151;
+        border: 1px solid #d1d5db;
+    }
+
+    .btn-outline:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+
+    /* Estado de partidos */
+    .status {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 12px;
+        text-transform: uppercase;
+    }
+
+    .status-programado {
+        background: #ddd6fe;
+        color: #7c3aed;
+    }
+
+    .status-en_curso {
+        background: #fecaca;
+        color: #dc2626;
+        animation: pulse 2s infinite;
+    }
+
+    .status-finalizado {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-pendiente_resultado {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    /* Botones de estado */
+    .btn-warning {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+    }
+
+    /* Animación de pulso para partidos en vivo */
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    /* Estilos específicos para el header del ranking */
+    .ranking-header {
+        margin-bottom: 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ranking-header .header-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn.btn-outline {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .btn.btn-outline:hover {
+        background: #e2e8f0;
+        color: #334155;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto py-8">
+        
+        <!-- Breadcrumbs -->
+        {% breadcrumbs %}
+        
+        <!-- Header del Dashboard -->
+
+        <!-- VISTA AVANZADA -->
+        <div id="view-advanced" class="view-advanced">
+            
+            <!-- Métricas Avanzadas -->
+            <div class="dashboard-grid advanced-metrics">
+                {% stat_card title="Puntos Totales" value=estadisticas_usuario.puntos_totales|default:"0" icon="🏆" size="large" variant="default" icon_color="primary" trend="+15%" trend_label="vs mes anterior" %}
+                {% stat_card title="Precisión Global" value=estadisticas_usuario.porcentaje_efectividad|default:"0" icon="🎯" unit="%" value_color=estadisticas_usuario.porcentaje_efectividad|stats_color:"precision" size="large" description=estadisticas_usuario.apuestas_acertadas|default:"0"|add:" de "|add:estadisticas_usuario.total_apuestas|default:"0" %}
+                {% stat_card title="Ranking" value="#"|add:ranking_posicion|default:"#1" icon="📊" size="large" variant="highlighted" icon_color="success" description="Top 10% de jugadores" %}
+                {% stat_card title="Quinielas" value=estadisticas_usuario.quinielas_activas|default:"0" icon="🎮" size="large" icon_color="info" description="Participando activamente" %}
+                {% stat_card title="Racha" value=estadisticas_usuario.racha_actual|default:"0" icon="⚡" size="large" value_color=estadisticas_usuario.racha_actual|stats_color:"streak" description="Aciertos consecutivos" %}
+                </div>
+
+                <div class="metric-card detailed">
+                    <div class="metric-header">
+                        <span class="metric-icon">💯</span>
+                        <h3 class="metric-title">Promedio Liga</h3>
+                    </div>
+                    <div class="metric-value">{{ promedio_puntos|floatformat:0|default:"0" }}</div>
+                    <div class="metric-breakdown">Media de todos los jugadores</div>
+                </div>
+            </div>
+
+            <!-- Content Avanzado -->
+            <div class="dashboard-grid">
+                
+                <!-- Análisis de Partidos Detallado -->
+                <div class="dashboard-card large">
+                    <div class="card-header">
+                        <h2 class="card-title">⚽ Análisis de Partidos</h2>
+                        <div class="card-actions">
+                            <a href="{% url 'quinielas:partidos' %}" class="btn btn-outline">Ver todos</a>
+                            <a href="{% url 'quinielas:mis_apuestas' %}" class="btn btn-primary">Mis Apuestas</a>
+                        </div>
+                    </div>
+                    
+                    <div class="partidos-detailed">
+                        {% for partido in proximos_partidos|slice:":4" %}
+                        <div class="partido-card advanced" data-partido-id="{{ partido.id }}">
+                            <div class="partido-header">
+                                <div class="equipos-container">
+                                    <div class="equipo-info">
+                                        <span class="equipo-nombre">{{ partido.equipo_local.nombre|default:"Equipo A" }}</span>
+                                        {% if partido.estadisticas.goles_local is not None %}
+                                        <span class="equipo-score">{{ partido.estadisticas.goles_local }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="vs-section">
+                                        <span class="vs">VS</span>
+                                        <div class="match-time">{{ partido.fecha_hora|date:"H:i"|default:"--:--" }}</div>
+                                    </div>
+                                    <div class="equipo-info">
+                                        <span class="equipo-nombre">{{ partido.equipo_visitante.nombre|default:"Equipo B" }}</span>
+                                        {% if partido.estadisticas.goles_visitante is not None %}
+                                        <span class="equipo-score">{{ partido.estadisticas.goles_visitante }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="partido-details">
+                                <div class="match-info">
+                                    <span class="jornada">Jornada {{ partido.jornada|default:"--" }}</span>
+                                    <span class="fecha">{{ partido.fecha_hora|date:"d/m/Y"|default:"Fecha TBD" }}</span>
+                                    <span class="status status-{{ partido.estado|lower }}">
+                                        {% if partido.estado == "PROGRAMADO" %}
+                                            {% if partido.minutos_para_inicio > 0 %}
+                                                EN {{ partido.minutos_para_inicio|tiempo_amigable|upper }}
+                                            {% else %}
+                                                ⏰ ¡Ya empezó!
+                                            {% endif %}
+                                        {% elif partido.estado == "EN_CURSO" %}
+                                            🔴 En Vivo
+                                        {% elif partido.estado == "FINALIZADO" %}
+                                            ✅ Finalizado
+                                        {% elif partido.estado == "PENDIENTE_RESULTADO" %}
+                                            ⏳ Pendiente
+                                        {% else %}
+                                            {{ partido.estado|default:"Programado" }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="partido-actions">
+                                    {% if partido.tiene_apuesta %}
+                                    <div class="apuesta-info">
+                                        <span class="apuesta-icon">✅</span>
+                                        <span class="apuesta-text">Apostaste: {{ partido.mi_apuesta.goles_local_apostados }}-{{ partido.mi_apuesta.goles_visitante_apostados }}</span>
+                                        {% if partido.mi_apuesta.puntos %}
+                                        <span class="apuesta-points">{{ partido.mi_apuesta.puntos }}pts</span>
+                                        {% endif %}
+                                    </div>
+                                    {% else %}
+                                    {% if partido.puede_apostar and partido.id and not partido.id|stringformat:"s"|slice:":4" == "api_" %}
+                                    <button onclick="irApostar({{ partido.id }})" class="btn btn-action" data-partido-id="{{ partido.id }}">
+                                        🎯 Apostar
+                                    </button>
+                                    {% elif partido.estado == "EN_CURSO" %}
+                                    <span class="btn btn-warning opacity-75 cursor-not-allowed">
+                                        🔴 En juego
+                                    </span>
+                                    {% elif partido.estado == "FINALIZADO" %}
+                                    <span class="btn btn-secondary opacity-75 cursor-not-allowed">
+                                        ✅ Terminado
+                                    </span>
+                                    {% elif not partido.puede_apostar %}
+                                    <span class="btn btn-secondary opacity-75 cursor-not-allowed">
+                                        ⏰ Tiempo expirado
+                                    </span>
+                                    {% else %}
+                                    <span class="btn btn-action opacity-50 cursor-not-allowed">
+                                        🚫 Próximamente
+                                    </span>
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state large">
+                            <span class="empty-icon">⚽</span>
+                            <h3>No hay partidos programados</h3>
+                            <p>¡Mantente atento a nuevos partidos!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Ranking Detallado -->
+                <div class="dashboard-card">
+                    <div class="card-header ranking-header">
+                        <h2 class="card-title">🏅 Ranking Completo</h2>
+                        <div class="header-actions">
+                            <span class="btn btn-outline">Todos los usuarios</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ranking-detailed">
+                        {% for usuario_data in top_usuarios|slice:":8" %}
+                        <div class="ranking-item detailed {% if usuario_data.usuario == user %}current-user highlight{% endif %}">
+                            <div class="position-info">
+                                <span class="position-number">#{{ forloop.counter }}</span>
+                                {% if forloop.counter == 1 %}
+                                <span class="position-medal">🥇</span>
+                                {% elif forloop.counter == 2 %}
+                                <span class="position-medal">🥈</span>
+                                {% elif forloop.counter == 3 %}
+                                <span class="position-medal">🥉</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    {{ usuario_data.usuario.username|first|upper }}
+                                </div>
+                                <div class="user-details">
+                                    <span class="username">{{ usuario_data.usuario.username }}</span>
+                                    {% if usuario_data.usuario == user %}
+                                    <span class="user-badge">Tú</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="stats-info">
+                                <span class="points">{{ usuario_data.puntos }} pts</span>
+                                <span class="precision">{{ usuario_data.precision }}% precisión</span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state">
+                            <span class="empty-icon">👥</span>
+                            <p>Sin datos de ranking</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Estadísticas Extra -->
+            <div class="dashboard-card stats-extra">
+                <div class="card-header">
+                    <h2 class="card-title">📈 Estadísticas Adicionales</h2>
+                </div>
+                
+                <!-- Grid manual de estadísticas -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6">
+                    {% stat_card title="Total Jugadores" value=total_usuarios|default:"1" icon="👥" size="compact" variant="minimal" icon_color="info" %}
+                    {% stat_card title="Partidos Totales" value=total_partidos|default:"0" icon="⚽" size="compact" variant="minimal" icon_color="neutral" %}
+                    {% stat_card title="Tiempo Jugando" value=user.date_joined|timesince|slice:":10" icon="🔥" size="compact" variant="minimal" icon_color="warning" %}
+                    {% stat_card title="Mejor Racha" value=estadisticas_usuario.mejor_racha|default:"0" icon="📊" size="compact" variant="minimal" value_color=estadisticas_usuario.mejor_racha|stats_color:"streak" %}
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas (Común a ambas vistas) -->
+        <div class="dashboard-card actions-quick">
+            <div class="card-header">
+                <h2 class="card-title">🚀 Acciones Rápidas</h2>
+            </div>
+            
+            <div class="actions-grid">
+                {% if user.userprofile.tipo_usuario == 'ORGANIZADOR' %}
+                <a href="{% url 'quinielas:crear' %}" class="action-btn primary">
+                    <span class="action-icon">➕</span>
+                    <span class="action-text">Crear Quiniela</span>
+                </a>
+                {% endif %}
+                
+                <a href="{% url 'quinielas:unirse' %}" class="action-btn">
+                    <span class="action-icon">🎯</span>
+                    <span class="action-text">Unirse a Quiniela</span>
+                </a>
+                
+                <a href="{% url 'quinielas:partidos' %}" class="action-btn">
+                    <span class="action-icon">⚽</span>
+                    <span class="action-text">Ver Partidos</span>
+                </a>
+                
+                <a href="{% url 'quinielas:mis_apuestas' %}" class="action-btn">
+                    <span class="action-icon">📊</span>
+                    <span class="action-text">Mis Apuestas</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Quinielas Creadas (Solo para organizadores) -->
+        {% load quinielas_extras %}
+        {% get_user_created_quinielas user as created_quinielas %}
+        {% if created_quinielas %}
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2 class="card-title">🎯 Mis Quinielas Creadas</h2>
+                <p class="text-sm text-gray-600">Administra las quinielas que has creado</p>
+            </div>
+            
+            <div class="p-6">
+                <div class="grid gap-4">
+                    {% for quiniela in created_quinielas %}
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-green-300 transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-gray-900">{{ quiniela.nombre }}</h3>
+                                <p class="text-sm text-gray-600">
+                                    {{ quiniela.participantes.count }} participante{{ quiniela.participantes.count|pluralize }}
+                                    • Creada {{ quiniela.fecha_creacion|timesince }} ago
+                                </p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <a href="{% url 'quinielas:dashboard_creador' quiniela.id %}" 
+                                   class="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors text-sm font-medium">
+                                    📊 Dashboard
+                                </a>
+                                <a href="{% url 'quinielas:gestionar_participantes' quiniela.id %}" 
+                                   class="px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors text-sm font-medium">
+                                    👥 Gestionar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if created_quinielas|length > 3 %}
+                <div class="mt-4 text-center">
+                    <a href="{% url 'quinielas:home' %}" class="text-green-600 hover:text-green-700 font-medium">
+                        Ver todas mis quinielas →
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+// Toggle entre vistas
+function switchView(viewType) {
+    // Ocultar todas las vistas
+    document.getElementById('view-simple').classList.remove('active');
+    document.getElementById('view-advanced').classList.remove('active');
+    
+    // Remover clase active de botones
+    document.getElementById('btn-simple').classList.remove('active');
+    document.getElementById('btn-advanced').classList.remove('active');
+    
+    // Mostrar vista seleccionada
+    document.getElementById('view-' + viewType).classList.add('active');
+    document.getElementById('btn-' + viewType).classList.add('active');
+    
+    // Guardar preferencia en localStorage
+    localStorage.setItem('dashboardView', viewType);
+    
+    console.log('📊 Vista cambiada a:', viewType);
+}
+
+// Función para navegar a apostar
+function irApostar(partidoId) {
+    console.log('🎯 Navegando a apostar partido:', partidoId);
+    
+    if (!partidoId) {
+        console.error('❌ ID de partido no válido');
+        if (window.toastManager) {
+            toastManager.error('Error: ID de partido no válido');
+        }
+        return;
+    }
+    
+    // Construir URL manualmente para asegurar que funcione
+    const url = `/apostar/${partidoId}/`;
+    console.log('📍 URL construida:', url);
+    
+    // Agregar loading state al botón
+    const button = document.querySelector(`[data-partido-id="${partidoId}"]`);
+    if (button && window.buttonLoader) {
+        buttonLoader.start(button, 'Cargando...');
+    }
+    
+    // Navegar
+    try {
+        window.location.href = url;
+    } catch (error) {
+        console.error('❌ Error al navegar:', error);
+        if (window.toastManager) {
+            toastManager.error('Error al cargar la página de apuestas');
+        }
+        
+        // Restaurar botón
+        if (button && window.buttonLoader) {
+            buttonLoader.stop(button);
+        }
+    }
+}
+
+// Restaurar vista preferida al cargar
+document.addEventListener('DOMContentLoaded', function() {
+    const savedView = localStorage.getItem('dashboardView') || 'simple';
+    switchView(savedView);
+    
+    // Animaciones de entrada
+    const cards = document.querySelectorAll('.dashboard-card, .metric-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    console.log('🎉 Dashboard unificado cargado!');
+});
+</script>
+
+<!-- Debug Script (remover en producción) -->
+<script src="{% static 'js/dashboard-debug.js' %}"></script>
+{% endblock %}

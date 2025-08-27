@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro - Quinielas{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">📝 Crear Cuenta</h1>
+            <p class="mt-2 text-gray-600">Únete y empieza a crear tus quinielas</p>
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Username -->
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Usuario
+                </label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                {% if form.username.help_text %}
+                    <p class="mt-1 text-sm text-gray-500">{{ form.username.help_text }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Password1 -->
+            <div>
+                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Contraseña
+                </label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    {% for error in form.password1.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                {% if form.password1.help_text %}
+                    <div class="mt-1 text-sm text-gray-500">
+                        {{ form.password1.help_text|safe }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Password2 -->
+            <div>
+                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Confirmar Contraseña
+                </label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    {% for error in form.password2.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                {% if form.password2.help_text %}
+                    <p class="mt-1 text-sm text-gray-500">{{ form.password2.help_text }}</p>
+                {% endif %}
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                    {% for error in form.non_field_errors %}
+                        <p class="text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Submit button -->
+            <button type="submit" class="w-full bg-primary text-white py-3 px-4 rounded-lg hover:bg-secondary transition-colors font-medium">
+                Crear Cuenta
+            </button>
+        </form>
+
+        <!-- Links -->
+        <div class="mt-6 text-center space-y-2">
+            <p class="text-sm text-gray-500">
+                ¿Ya tienes una cuenta? 
+                <a href="{% url 'accounts:login' %}" class="text-primary hover:text-secondary font-medium">
+                    Inicia sesión aquí
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

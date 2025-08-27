@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitar Promoción - Quinielas{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">🚀 Solicitar Promoción a Organizador</h1>
+        <p class="text-gray-600">Conviértete en Organizador y crea tus propias quinielas</p>
+    </div>
+
+    <!-- Card principal -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Header card -->
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+            <h2 class="text-white text-xl font-semibold">Promoción a Organizador</h2>
+        </div>
+
+        <!-- Contenido -->
+        <div class="p-6">
+            <!-- Estado actual -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">👤</span>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-blue-800">Estado actual</h3>
+                        <p class="text-sm text-blue-600">Participante</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requisitos -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Requisitos para ser Organizador</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        {% if apuestas_realizadas >= 5 %}
+                            <span class="text-green-500 text-xl mr-3">✅</span>
+                            <span class="text-green-700">Mínimo 5 apuestas realizadas</span>
+                            <span class="ml-auto bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
+                                {{ apuestas_realizadas }}/5
+                            </span>
+                        {% else %}
+                            <span class="text-red-500 text-xl mr-3">❌</span>
+                            <span class="text-red-700">Mínimo 5 apuestas realizadas</span>
+                            <span class="ml-auto bg-red-100 text-red-800 px-2 py-1 rounded text-sm">
+                                {{ apuestas_realizadas }}/5
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-green-500 text-xl mr-3">✅</span>
+                        <span class="text-green-700">Participación activa en quinielas</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-green-500 text-xl mr-3">✅</span>
+                        <span class="text-green-700">Compromiso con la comunidad</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Beneficios -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Beneficios de ser Organizador</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-center">
+                            <span class="text-2xl mb-2 block">🏆</span>
+                            <p class="text-sm font-medium text-gray-900">Crear Quinielas</p>
+                            <p class="text-xs text-gray-600">Organiza tus propias competencias</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-center">
+                            <span class="text-2xl mb-2 block">👥</span>
+                            <p class="text-sm font-medium text-gray-900">Invitar Usuarios</p>
+                            <p class="text-xs text-gray-600">Comparte códigos con amigos</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-center">
+                            <span class="text-2xl mb-2 block">📊</span>
+                            <p class="text-sm font-medium text-gray-900">Estadísticas Avanzadas</p>
+                            <p class="text-xs text-gray-600">Ve el rendimiento de tu quiniela</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-center">
+                            <span class="text-2xl mb-2 block">⭐</span>
+                            <p class="text-sm font-medium text-gray-900">Reconocimiento</p>
+                            <p class="text-xs text-gray-600">Badge especial de Organizador</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            {% if profile.puede_solicitar_promocion %}
+                <form method="post" class="text-center">
+                    {% csrf_token %}
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-gray-700 mb-4">
+                            ¡Cumples todos los requisitos! Tu solicitud será revisada por nuestro equipo.
+                        </p>
+                    </div>
+                    
+                    <button type="submit" 
+                            class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">
+                        🚀 Solicitar Promoción a Organizador
+                    </button>
+                </form>
+            {% else %}
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                    <span class="text-yellow-600 text-2xl block mb-2">⏳</span>
+                    <p class="text-yellow-800 font-medium">Aún no cumples todos los requisitos</p>
+                    <p class="text-yellow-700 text-sm mt-1">
+                        Necesitas {{ 5|add:apuestas_realizadas|add:"-"|add:apuestas_realizadas }} apuestas más para solicitar la promoción.
+                    </p>
+                    <a href="{% url 'quinielas:partidos' %}" 
+                       class="inline-block mt-3 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors">
+                        Ver Partidos Disponibles
+                    </a>
+                </div>
+            {% endif %}
+
+            <!-- Botón volver -->
+            <div class="mt-6 text-center">
+                <a href="{% url 'quinielas:home' %}" 
+                   class="text-gray-500 hover:text-gray-700 font-medium">
+                    ← Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

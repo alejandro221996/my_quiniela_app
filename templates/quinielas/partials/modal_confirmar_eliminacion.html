@@ -1,0 +1,63 @@
+<!-- Modal Confirmar Eliminación -->
+<div id="modalConfirmarEliminacion" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold text-red-600">
+                    Confirmar Eliminación
+                </h3>
+            </div>
+            
+            <form method="post" action="{% url 'quinielas:eliminar_participante' quiniela.id %}">
+                {% csrf_token %}
+                <input type="hidden" id="participante_id_eliminar" name="participante_id">
+                
+                <div class="px-6 py-4">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                        <div class="flex">
+                            <div class="text-red-400 mr-3">⚠️</div>
+                            <div>
+                                <h4 class="text-sm font-medium text-red-800 mb-2">
+                                    Esta acción no se puede deshacer
+                                </h4>
+                                <p class="text-sm text-red-700">
+                                    Estás a punto de eliminar al participante 
+                                    <strong id="username_eliminar"></strong> de esta quiniela.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p><strong>Esto eliminará:</strong></p>
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                            <li>Todas las apuestas del participante</li>
+                            <li>Su historial de puntos</li>
+                            <li>Su registro de pagos</li>
+                            <li>Su participación en la quiniela</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Motivo de la eliminación (opcional)
+                        </label>
+                        <textarea name="motivo_eliminacion" rows="3" 
+                                  class="form-input w-full" 
+                                  placeholder="Motivo por el cual se elimina al participante..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="px-6 py-4 border-t bg-gray-50 flex justify-end space-x-3">
+                    <button type="button" onclick="cerrarModal('modalConfirmarEliminacion')" 
+                            class="btn btn-outline">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn bg-red-600 text-white hover:bg-red-700">
+                        Sí, Eliminar Participante
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

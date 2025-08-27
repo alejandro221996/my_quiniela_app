@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}DEBUG - Dashboard Creador{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1>✅ Dashboard Creador FUNCIONANDO</h1>
+    <p>Quiniela: {{ quiniela.nombre }}</p>
+    <p>ID: {{ quiniela.id }}</p>
+    
+    <!-- Test Links -->
+    <div class="mt-4">
+        <a href="{% url 'quinielas:gestionar_participantes' quiniela.id %}" class="btn btn-primary">
+            👥 Gestionar Participantes
+        </a>
+        <a href="{% url 'quinielas:detalle' quiniela.id %}" class="btn btn-outline ml-2">
+            🏆 Ver Quiniela
+        </a>
+    </div>
+</div>
+{% endblock %}

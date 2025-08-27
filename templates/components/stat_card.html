@@ -1,0 +1,286 @@
+{% load static %}
+
+<!-- Componente: Métrica Principal -->
+<div class="stat-card {{ size|default:'normal' }} {{ variant|default:'default' }}">
+    <div class="stat-header">
+        {% if icon %}
+        <div class="stat-icon {{ icon_color|default:'primary' }}">{{ icon }}</div>
+        {% endif %}
+        <div class="stat-info">
+            <h3 class="stat-title">{{ title }}</h3>
+            {% if subtitle %}
+            <p class="stat-subtitle">{{ subtitle }}</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="stat-content">
+        <div class="stat-value {{ value_color|default:'primary' }}">
+            {{ value|default:'0' }}
+            {% if unit %}<span class="stat-unit">{{ unit }}</span>{% endif %}
+        </div>
+        
+        {% if trend is not None %}
+        {% with trend_value=trend|floatformat:1|add:0 %}
+        <div class="stat-trend {% if trend_value >= 0 %}positive{% else %}negative{% endif %}">
+            <span class="trend-icon">{% if trend_value >= 0 %}▲{% else %}▼{% endif %}</span>
+            <span class="trend-value">{{ trend|floatformat:1 }}%</span>
+            {% if trend_label %}
+            <span class="trend-label">{{ trend_label }}</span>
+            {% endif %}
+        </div>
+        {% endwith %}
+        {% endif %}
+        
+        {% if description %}
+        <p class="stat-description">{{ description }}</p>
+        {% endif %}
+    </div>
+    
+    {% if action_url %}
+    <a href="{{ action_url }}" class="stat-action">{{ action_text|default:'Ver más' }}</a>
+    {% endif %}
+</div>
+
+<style>
+/* Componente Stat Card */
+.stat-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+}
+
+.stat-card.compact {
+    padding: 1rem;
+}
+
+.stat-card.large {
+    padding: 2rem;
+}
+
+.stat-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon.primary {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.stat-icon.success {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.stat-icon.warning {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.stat-icon.danger {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.stat-icon.info {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-title {
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-subtitle {
+    color: #6b7280;
+    font-size: 0.75rem;
+    margin: 0;
+    margin-top: 0.25rem;
+}
+
+.stat-content {
+    margin-bottom: 1rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value.primary {
+    color: #059669;
+}
+
+.stat-value.success {
+    color: #16a34a;
+}
+
+.stat-value.warning {
+    color: #d97706;
+}
+
+.stat-value.danger {
+    color: #dc2626;
+}
+
+.stat-value.neutral {
+    color: #374151;
+}
+
+.stat-unit {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-left: 0.25rem;
+    color: #6b7280;
+}
+
+.stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.stat-trend.positive {
+    color: #059669;
+}
+
+.stat-trend.negative {
+    color: #dc2626;
+}
+
+.trend-icon {
+    font-size: 0.75rem;
+}
+
+.trend-label {
+    color: #6b7280;
+    margin-left: 0.25rem;
+}
+
+.stat-description {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin: 0;
+    margin-top: 0.5rem;
+}
+
+.stat-action {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #6b7280;
+    font-size: 0.75rem;
+    text-decoration: none;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover .stat-action {
+    opacity: 1;
+}
+
+.stat-action:hover {
+    color: #059669;
+    text-decoration: none;
+}
+
+/* Variantes de tamaño */
+.stat-card.compact .stat-value {
+    font-size: 1.5rem;
+}
+
+.stat-card.large .stat-value {
+    font-size: 2.5rem;
+}
+
+.stat-card.compact .stat-icon {
+    font-size: 1.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.stat-card.large .stat-icon {
+    font-size: 2rem;
+    width: 4rem;
+    height: 4rem;
+}
+
+/* Variantes de diseño */
+.stat-card.minimal {
+    box-shadow: none;
+    border: 2px solid #f3f4f6;
+}
+
+.stat-card.highlighted {
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+    border-color: #059669;
+}
+
+.stat-card.warning {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-color: #d97706;
+}
+
+.stat-card.danger {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 1.75rem;
+    }
+    
+    .stat-icon {
+        font-size: 1.25rem;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    .stat-header {
+        margin-bottom: 0.75rem;
+    }
+}
+</style>

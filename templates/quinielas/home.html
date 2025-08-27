@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+{% load stats_components %}
+{% load stats_components %}
+
+{% block title %}Dashboard - Quinielas{% endblock %}
+
+{% block content %}
+<!-- DEBUG: Usuario autenticado: {{ user.is_authenticated }} -->
+<!-- DEBUG: Username: {{ user.username }} -->
+<!-- DEBUG: User profile: {{ user_profile }} -->
+<!-- DEBUG: Puede crear: {{ puede_crear_quinielas }} -->
+<!-- DEBUG: Estadisticas: {{ estadisticas }} -->
+
+{% if user.is_authenticated %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header con estadísticas -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="lg:flex lg:items-center lg:justify-between">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center space-x-3">
+                        <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                            Bienvenido, {{ user.get_full_name|default:user.username }}
+                        </h1>
+                        {% if user_profile %}
+                            {% if user_profile.tipo_usuario == 'ORGANIZADOR' %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                                    👑 Organizador
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    👤 Participante
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
+                        {% if jornada_actual %}
+                        <div class="mt-2 flex items-center text-sm text-gray-500">
+                            <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                            </svg>
+                            {{ jornada_actual.nombre }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mt-5 flex lg:mt-0 lg:ml-4 space-x-3">
+                    {% if puede_crear_quinielas %}
+                        <a href="{% url 'quinielas:crear' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Nueva Quiniela
+                        </a>
+                    {% elif puede_solicitar_promocion %}
+                        <a href="{% url 'quinielas:solicitar_promocion' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" clip-rule="evenodd"></path>
+                            </svg>
+                            Solicitar Promoción
+                        </a>
+                    {% elif user_profile.promocion_solicitada %}
+                        <span class="inline-flex items-center px-4 py-2 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-800 bg-yellow-100">
+                            <svg class="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                            </svg>
+                            Promoción Pendiente
+                        </span>
+                    {% endif %}
+                    
+                    <a href="{% url 'quinielas:unirse' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                        </svg>
+                        Unirse a Quiniela
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas del usuario usando componentes unificados -->
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            {% if estadisticas %}
+            <!-- Estadísticas de API usando componentes unificados -->
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {% stat_card title="Total de Apuestas" value=estadisticas.total_apuestas icon="📊" size="normal" variant="default" icon_color="primary" %}
+                {% stat_card title="Apuestas Acertadas" value=estadisticas.apuestas_acertadas icon="✅" size="normal" variant="default" icon_color="success" value_color="success" %}
+                {% stat_card title="Puntos Totales" value=estadisticas.puntos_totales icon="⭐" size="normal" variant="default" icon_color="warning" unit="pts" %}
+                {% stat_card title="% Efectividad" value=estadisticas.porcentaje_efectividad icon="📈" size="normal" variant="default" icon_color="info" value_color=estadisticas.porcentaje_efectividad|stats_color:"precision" unit="%" %}
+            </div>
+            {% else %}
+            <!-- Estadísticas básicas usando componentes unificados -->
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {% stat_card title="Mis Apuestas" value=user_profile.apuestas_realizadas|default:"0" icon="📊" size="normal" variant="default" icon_color="primary" %}
+                
+                {% stat_card title="Tipo de Usuario" value=tipo_usuario_display|default:"Participante" icon="👤" size="normal" variant="default" icon_color="info" %}
+                
+                {% if user_profile.promocion_solicitada %}
+                    {% stat_card title="Estado" value="Promoción Pendiente" icon="⏳" size="normal" variant="warning" icon_color="warning" %}
+                {% elif puede_crear_quinielas %}
+                    {% stat_card title="Estado" value="Activo" icon="✨" size="normal" variant="highlighted" icon_color="success" value_color="success" %}
+                {% else %}
+                    {% stat_card title="Estado" value="Participante" icon="👥" size="normal" variant="default" icon_color="primary" %}
+                {% endif %}
+                
+                {% stat_card title="Mis Quinielas" value="1" icon="🎯" size="normal" variant="default" icon_color="primary" action_url="quinielas:crear" action_text="Nueva" %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Contenido principal siempre visible -->
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Columna principal: Mis Quinielas -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                        <div class="px-4 py-5 sm:px-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Mis Quinielas</h3>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                                Quinielas que has creado o en las que participas
+                            </p>
+                        </div>
+                        
+                        {% if quinielas %}
+                        <ul class="divide-y divide-gray-200">
+                            {% for quiniela in quinielas %}
+                            <li>
+                                <a href="{% url 'quinielas:detalle' quiniela.pk %}" class="block hover:bg-gray-50">
+                                    <div class="px-4 py-4 sm:px-6">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0">
+                                                    {% if quiniela.creador == user %}
+                                                    <div class="h-8 w-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                                                        <svg class="h-4 w-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM15.657 6.343a1 1 0 011.414 0A9.972 9.972 0 0119 12a9.972 9.972 0 01-1.929 5.657 1 1 0 11-1.414-1.414A7.971 7.971 0 0017 12c0-1.636-.525-3.152-1.343-4.243a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
+                                                        <svg class="h-4 w-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                        {{ quiniela.nombre }}
+                                                    </div>
+                                                    <div class="text-sm text-gray-500">
+                                                        {% if quiniela.creador == user %}
+                                                        Creada por ti • {{ quiniela.participantes.count }} participante{{ quiniela.participantes.count|pluralize }}
+                                                        {% else %}
+                                                        Creada por {{ quiniela.creador.get_full_name|default:quiniela.creador.username }}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center">
+                                                {% if quiniela.activa %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Activa
+                                                </span>
+                                                {% else %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                    Finalizada
+                                                </span>
+                                                {% endif %}
+                                                <svg class="ml-2 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <div class="px-4 py-8 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">Sin quinielas</h3>
+                            <p class="mt-1 text-sm text-gray-500">Comienza creando una nueva quiniela o únete a una existente.</p>
+                            <div class="mt-6 flex justify-center space-x-3">
+                                <a href="{% url 'quinielas:crear' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Nueva Quiniela
+                                </a>
+                                <a href="{% url 'quinielas:unirse' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Unirse a Quiniela
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Sidebar: Próximos partidos y equipos -->
+                <div class="space-y-6">
+                    
+                    <!-- Próximos Partidos -->
+                    {% if proximos_partidos %}
+                    <div class="bg-white shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Próximos Partidos</h3>
+                            <div class="space-y-4">
+                                {% for partido in proximos_partidos %}
+                                <div class="border-l-4 border-blue-400 pl-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2 text-sm">
+                                            <span class="font-medium">{{ partido.equipo_local }}</span>
+                                            <span class="text-gray-500">vs</span>
+                                            <span class="font-medium">{{ partido.equipo_visitante }}</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            {{ partido.fecha|date:"d M" }}
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-gray-600 mt-1">
+                                        {{ partido.estadio }} • {{ partido.fecha|date:"H:i" }}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="mt-4">
+                                <a href="{% url 'quinielas:partidos' %}" class="text-indigo-600 hover:text-indigo-500 text-sm font-medium">
+                                    Ver todos los partidos →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Equipos Populares -->
+                    {% if equipos_populares %}
+                    <div class="bg-white shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Equipos Destacados</h3>
+                            <div class="space-y-3">
+                                {% for equipo in equipos_populares %}
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex-shrink-0">
+                                        <div class="h-8 w-8 bg-gradient-to-r {{ equipo.color_class }} rounded-full flex items-center justify-center">
+                                            <span class="text-white text-xs font-bold">{{ equipo.nombre|slice:":2"|upper }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">{{ equipo.nombre }}</p>
+                                        <p class="text-xs text-gray-500">{{ equipo.ciudad }}</p>
+                                    </div>
+                                    <div class="flex-shrink-0 text-xs text-gray-500">
+                                        {{ equipo.partidos_jugados }}J
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Acciones rápidas -->
+                    <div class="bg-white shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Acciones Rápidas</h3>
+                            <div class="space-y-3">
+                                <a href="{% url 'quinielas:partidos' %}" class="w-full flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                    <svg class="h-4 w-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Ver Partidos
+                                </a>
+                                <a href="{% url 'quinielas:mis_apuestas' %}" class="w-full flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                    <svg class="h-4 w-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Mis Apuestas
+                                </a>
+                                <a href="{% url 'quinielas:ranking' %}" class="w-full flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                    <svg class="h-4 w-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Rankings
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-refresh de estadísticas cada 5 minutos
+setTimeout(function() {
+    location.reload();
+}, 300000);
+</script>
+{% else %}
+<!-- Usuario no autenticado -->
+<div class="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div class="max-w-md w-full space-y-8">
+        <div class="text-center">
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                ¡Bienvenido a Quinielas!
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Inicia sesión para acceder a tu dashboard
+            </p>
+        </div>
+        <div class="space-y-4">
+            <a href="{% url 'accounts:login' %}" 
+               class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Iniciar Sesión
+            </a>
+            <a href="{% url 'accounts:registro' %}" 
+               class="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Registrarse
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

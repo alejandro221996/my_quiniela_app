@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load stats_components %}
+
+{% block title %}Dashboard Creador - {{ quiniela.nombre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Estilos mejorados para botones del dashboard del creador */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: #059669;
+    color: white;
+    border-color: #059669;
+}
+
+.btn-primary:hover {
+    background-color: #047857;
+    border-color: #047857;
+    color: white;
+}
+
+.btn-outline {
+    background-color: white;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.btn-outline:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+    color: #1f2937;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Efectos adicionales para botones en acciones rápidas */
+.action-btn {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+}
+
+.action-btn:hover {
+    background-color: #059669;
+    color: white;
+    border-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+/* Mejoras para elementos interactivos */
+.participante-row:hover {
+    background-color: #f8fafc;
+    transform: translateX(2px);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- TEST: Forzando actualización de template -->
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Dashboard del Creador
+            </h1>
+            <p class="text-gray-600">{{ quiniela.nombre }}</p>
+        </div>
+        <div class="flex gap-3 mt-4 md:mt-0">
+            <a href="{% url 'quinielas:gestionar_participantes' quiniela.id %}" 
+               class="btn btn-primary">
+                👥 Gestionar Participantes
+            </a>
+            <a href="{% url 'quinielas:detalle' quiniela.id %}" 
+               class="btn btn-outline">
+                🏆 Ver Quiniela
+            </a>
+        </div>
+    </div>
+
+    <!-- Resumen Rápido -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {% stat_card title="Participantes" value=stats.total_participantes icon="👥" variant="primary" %}
+        {% stat_card title="Pagos Recibidos" value=stats.pagos_recibidos icon="✅" variant="success" %}
+        {% stat_card title="Pagos Pendientes" value=stats.pagos_pendientes icon="⏳" variant="warning" %}
+        {% stat_card title="Total Recaudado" value="$"|add:stats.total_recaudado icon="💰" variant="info" %}
+    </div>
+
+    <!-- Grid Principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Columna Principal -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Estado de Pagos -->
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="px-6 py-4 border-b bg-gray-50">
+                    <h2 class="text-lg font-semibold text-gray-900">Estado de Pagos</h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <!-- Barra de Progreso -->
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-600">Progreso de Pagos</span>
+                                <span class="font-medium">{{ stats.porcentaje_pagado }}% completado</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="bg-green-500 h-3 rounded-full transition-all duration-500" 
+                                     style="width: {{ stats.porcentaje_pagado }}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Desglose por Estado -->
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <div class="text-2xl font-bold text-green-600">{{ stats.pagados }}</div>
+                                <div class="text-sm text-green-700">Pagados</div>
+                            </div>
+                            <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                                <div class="text-2xl font-bold text-yellow-600">{{ stats.pendientes }}</div>
+                                <div class="text-sm text-yellow-700">Pendientes</div>
+                            </div>
+                            <div class="text-center p-4 bg-red-50 rounded-lg">
+                                <div class="text-2xl font-bold text-red-600">{{ stats.suspendidos }}</div>
+                                <div class="text-sm text-red-700">Suspendidos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="px-6 py-4 border-b bg-gray-50">
+                    <h2 class="text-lg font-semibold text-gray-900">Actividad Reciente</h2>
+                </div>
+                <div class="p-6">
+                    {% if actividad_reciente %}
+                        <div class="space-y-4">
+                            {% for item in actividad_reciente %}
+                            <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg">
+                                    {% if item.tipo == 'pago' %}✅
+                                    {% elif item.tipo == 'union' %}👥
+                                    {% elif item.tipo == 'apuesta' %}🎯
+                                    {% else %}📝{% endif %}
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900">{{ item.descripcion }}</p>
+                                    <p class="text-xs text-gray-500">{{ item.fecha|timesince }} ago</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8 text-gray-500">
+                            <div class="text-4xl mb-2">📊</div>
+                            <p>No hay actividad reciente</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Top Participantes -->
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="px-6 py-4 border-b bg-gray-50">
+                    <h2 class="text-lg font-semibold text-gray-900">Top Participantes</h2>
+                </div>
+                <div class="p-6">
+                    {% if top_participantes %}
+                        <div class="space-y-3">
+                            {% for participante in top_participantes %}
+                            <div class="participante-row flex items-center justify-between p-3 bg-gray-50 rounded-lg transition-all duration-200 cursor-pointer hover:shadow-md">
+                                <div class="flex items-center space-x-3">
+                                    <div class="text-lg">
+                                        {% if forloop.counter == 1 %}🥇
+                                        {% elif forloop.counter == 2 %}🥈
+                                        {% elif forloop.counter == 3 %}🥉
+                                        {% else %}{{ forloop.counter }}.{% endif %}
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-900">
+                                            {{ participante.usuario.get_full_name|default:participante.usuario.username }}
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            {{ participante.get_estado_display }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-gray-900">{{ participante.puntos_totales }} pts</div>
+                                    <div class="text-sm text-gray-500">{{ participante.total_apuestas }} apuestas</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8 text-gray-500">
+                            <div class="text-4xl mb-2">🏆</div>
+                            <p>Aún no hay puntuaciones</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Acciones Rápidas -->
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="px-6 py-4 border-b bg-gray-50">
+                    <h3 class="text-lg font-semibold text-gray-900">Acciones Rápidas</h3>
+                </div>
+                <div class="p-6 space-y-3">
+                    <a href="{% url 'quinielas:gestionar_participantes' quiniela.id %}" 
+                       class="action-btn">
+                        👥 Gestionar Participantes
+                    </a>
+                    <a href="{% url 'quinielas:exportar_participantes' quiniela.id %}" 
+                       class="action-btn">
+                        📥 Exportar Datos
+                    </a>
+                    <a href="{% url 'quinielas:detalle' quiniela.id %}" 
+                       class="action-btn">
+                        🏆 Ver Tabla de Posiciones
+                    </a>
+                </div>
+            </div>
+
+            <!-- Información de la Quiniela -->
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="px-6 py-4 border-b bg-gray-50">
+                    <h3 class="text-lg font-semibold text-gray-900">Información</h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <div class="text-sm text-gray-500">Creada</div>
+                        <div class="font-medium">{{ quiniela.fecha_creacion|date:"d/m/Y" }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500">Estado</div>
+                        <div class="font-medium">
+                            {% if quiniela.activa %}
+                                <span class="text-green-600">✅ Activa</span>
+                            {% else %}
+                                <span class="text-red-600">❌ Inactiva</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500">Partidos</div>
+                        <div class="font-medium">{{ stats.total_partidos }} programados</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500">Apuestas Totales</div>
+                        <div class="font-medium">{{ stats.total_apuestas }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recordatorios -->
+            {% if recordatorios %}
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div class="px-6 py-4 border-b border-yellow-200">
+                    <h3 class="text-lg font-semibold text-yellow-800">⚠️ Recordatorios</h3>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-2 text-sm text-yellow-700">
+                        {% for recordatorio in recordatorios %}
+                        <li class="flex items-start space-x-2">
+                            <span class="text-yellow-500 mt-0.5">•</span>
+                            <span>{{ recordatorio }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
